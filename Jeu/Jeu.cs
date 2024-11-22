@@ -2,7 +2,8 @@
 {
     static void Main(string[] args)
     { 
-        /// Ici on met tout le jeu
+        TriDico dictfr = new TriDico("fr");
+        TriDico dicten = new TriDico("en");
     }
 
 }
