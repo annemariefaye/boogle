@@ -1,10 +1,18 @@
 ﻿class De
 {
     ///Attributs
+    char[] faces;
 
 
 
     ///Constructeur
+    public De(char[] faces) 
+    {  
+        this.faces = faces; 
+    }
+
+    public char[] Faces { get { return faces; } }
+
 
 
 
