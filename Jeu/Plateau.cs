@@ -4,16 +4,25 @@
     ///
     Dictionnaire dico;
     string langue;
+    int taille;
     De[] des;
 
 
 
     ///Constructeur
-    public Plateau(string langue, De[] des) 
+    public Plateau(string langue, int taille) 
     { 
         this.langue = langue;
         this.dico = new Dictionnaire(this.langue);
-        this.des = des;
+        this.taille = taille;   
+        this.des = new De[taille*taille];
+
+        for (int i = 0; i < taille*taille; i++)
+        {
+            this.des[i] = new De(new char[] { 'E', 'L', 'I', 'L', 'A', 'T' });
+        }
+
+        /// Generer les des et faire un dico qui compte le nombre de lettre et ban une lettre si on a atteint le cota dans Lettres.txt
     }
 
 
@@ -82,5 +91,22 @@
         }
 
         return res;
+    }
+
+    ///A modifier
+    public void AfficherPlateau()
+    {
+
+        int z = 0;
+        for (int i = 0; i < this.taille; i++)
+        {
+            for (int j = 0; j < this.taille; j++)
+            {
+                Console.Write(this.des[z].Faces[0]);
+                z++;
+            }
+            Console.WriteLine();
+        }
+
     }
 }
