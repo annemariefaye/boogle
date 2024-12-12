@@ -150,7 +150,7 @@ class Jeu
                     /// Conditon pour voir si dansPlateau == true et dejaVu == false
                     /// update le score et afficher le score a chaque tour
                     /// dire il reste combien de temps
-                    /// Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);
+                    /// Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);c
                 }
 
                 plateau.UpdatePlateau();
