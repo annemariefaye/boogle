@@ -17,14 +17,20 @@ class TriDico
 
         if (langue == "fr")
         {
-            this.texte = File.ReadAllText("C:\\Users\\annem\\OneDrive\\ESILV\\A2\\S1\\Info\\Algorithmique et programmation orientée objet\\Projet\\Jeu\\Jeu\\MotsPossiblesFR.txt");
+            string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "MotsPossiblesFR.txt");
+            chemin = Path.GetFullPath(chemin);
+
+            this.texte = File.ReadAllText(chemin);
             char[] separateurs = { ' ', '\n'};
             this.mots = this.texte.Split(separateurs, StringSplitOptions.RemoveEmptyEntries);
         }
 
         else if (langue == "en")
         {
-            this.texte = File.ReadAllText("C:\\Users\\annem\\OneDrive\\ESILV\\A2\\S1\\Info\\Algorithmique et programmation orientée objet\\Projet\\Jeu\\Jeu\\MotsPossiblesEN.txt");
+            string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "MotsPossiblesEN.txt");
+            chemin = Path.GetFullPath(chemin);
+
+            this.texte = File.ReadAllText(chemin);
             char[] separateurs = { ' ', '\n' };
             this.mots = this.texte.Split(separateurs, StringSplitOptions.RemoveEmptyEntries);
         }
