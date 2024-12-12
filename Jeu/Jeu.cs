@@ -19,7 +19,9 @@ class Jeu
 
         for (int i = 0; i < nbJoueurs; i++)
         {
-            joueurs[i] = new Joueur(); 
+            Console.WriteLine("Entrer votre nom :");
+            string n = Console.ReadLine();
+            joueurs[i] = new Joueur(n); 
         }
 
         /// Creation du plateau
@@ -35,7 +37,7 @@ class Jeu
 
 
         /// Création du chrono
-
+        int tempsLimite = 10;
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
@@ -43,23 +45,29 @@ class Jeu
         { 
             for (int i = 0; i< nbJoueurs; i++)
             {
-                Console.WriteLine($"C'est au tour de {joueurs[i].ToString}"); ///remplacer ToString par pseudo
+                Console.WriteLine($"C'est au tour de {joueurs[i].Pseudo}"); ///remplacer ToString par pseudo
 
                 plateau.AfficherPlateau();
                 stopwatch.Restart();
 
-                while (stopwatch.Elapsed.TotalSeconds < 60)
+                while (stopwatch.Elapsed.TotalSeconds < tempsLimite)
                 { 
                     Console.WriteLine("Saisissez un nouveau mot");
-                    string mot = Console.ReadLine();
+                    string mot = Console.ReadLine().ToUpper();
 
                     bool dansPlateau = plateau.Test_Plateau(mot);
                     bool dejaVu = joueurs[i].Contain(mot);
+                    if(!dejaVu && dansPlateau)
+                    {
+                        joueurs[i].Add_Mot(mot);
+                    }
                     /// Conditon pour voir si dansPlateau == true et dejaVu == false
                     /// update le score et afficher le score a chaque tour
                     /// dire il reste combien de temps
-                    Console.WriteLine(60 - stopwatch.Elapsed.TotalSeconds);
+                    Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);
                 }
+
+                plateau.UpdatePlateau();
             }
         }
 

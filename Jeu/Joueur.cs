@@ -1,26 +1,81 @@
 ﻿class Joueur
 {
-    ///Attributs
+    ///1)Attributs
+    string pseudo;
+    int score;
+    string[] mots;
 
 
-
-    ///Constructeur
-
-
-
-    ///Méthodes obligatoires
-    public bool Contain(string mot) 
+    ///2)Constructeur
+    public Joueur(string pseudo)
     {
-        return true; //enlève cette ligne, c'est juste pour compiler
+        this.pseudo = pseudo;
+        while (this.pseudo.Length >= 20)
+        {
+            Console.WriteLine("pseudo trop grand, veuillez réentrer le pseudo");///mettre un accent sur reentrer
+            this.pseudo = Console.ReadLine();
+        }
+        this.score = 0;
+        this.mots = new string[0];
+    }
+
+    ///3)proprietes de lecture
+    public string Pseudo { get { return this.pseudo; } }
+    public int Score { get { return this.score; } }
+    public string[] Mots { get { return this.mots; } }
+
+    ///4)Méthodes obligatoires
+    public bool Contain(string mot)
+    {
+        bool con = false;
+        foreach (string m in this.mots)
+        {
+            if (m == mot)
+            {
+                con = true; // Le mot existe déjà
+            }
+        }
+
+        return con;
     }
 
     public void Add_Mot(string mot)
     {
-
+        if (!Contain(mot))
+        {
+            string[] nouveauxMots = new string[this.mots.Length + 1];
+            for (int i = 0; i < this.mots.Length; i++)
+            {
+                nouveauxMots[i] = this.mots[i];
+            }
+            nouveauxMots[this.mots.Length] = mot; // ajouter le nouveau mot
+            this.mots = nouveauxMots; // mise à jour du tableau
+            Console.WriteLine($"Le mot {mot} est valide");
+            this.score++; // mise à jour du score
+        }
+        else
+        {
+            Console.WriteLine("le mot " + mot + " a deja etait trouve par le joueur " + this.pseudo);
+        }
     }
-
     public string toString()
     {
-        return ""; //enlève cette ligne, c'est juste pour compiler
+        string chaine = "";
+        for (int i = 0; i < this.mots.Length; i++)
+        {
+            chaine += this.mots[i];
+            if (i < this.mots.Length - 1)
+            {
+                chaine += ", ";
+            }
+        }
+        return "Joueur: " + this.pseudo + "Score: " + this.score + "Mots trouvés: " + chaine;
     }
+
+    public void UpdateScore(string mot)
+    {
+
+    }
+
+
 }
