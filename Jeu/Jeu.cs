@@ -119,7 +119,7 @@ class Jeu
 
 
         /// Création du chrono
-        int tempsLimite = 10;
+        int tempsLimite = 1;
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
@@ -155,26 +155,60 @@ class Jeu
 
                 plateau.UpdatePlateau();
                 Console.WriteLine($"Le score de {joueurs[i].Pseudo} à la fin du tour est : {joueurs[i].Score}");
-                Thread.Sleep(5000);
+                Thread.Sleep(000);
             }
         }
         
         Console.Clear();
 
         Console.WriteLine("La partie est finie");
+
+        /// Comparer les scores des joueurs 
         int max = joueurs[0].Score;
         string gagnant = joueurs[0].Pseudo;
+        HashSet<string> gagnants = new HashSet<string>(); ///Pour éviter les doublons
         for (int i = 0; i < nbJoueurs; i++)
         {
             if (max < joueurs[i].Score)
             {
                 max = joueurs[i].Score;
                 gagnant = joueurs[i].Pseudo;
+                gagnants = new HashSet<string>();
             }
 
-        }/// Comparer les scores des joueurs 
-        Console.WriteLine("Le score du vainqueur est : " + max);
-        Console.WriteLine("La vainqueur est : " + gagnant);
+            /// Si égalité des scores maximum
+            if(max == joueurs[i].Score)
+            {
+                gagnants.Add(joueurs[i].Pseudo);
+                gagnants.Add(gagnant);
+            }
+        }
+        
+        /// Gestion de plusieurs gagnants ou pas
+        if(gagnants.Count>=2)
+        {
+            Console.WriteLine("Le score des vainqueurs est : " + max);
+            Thread.Sleep(5000);
+
+            Console.WriteLine("Les gagnant sont : ");
+            foreach (string n in gagnants)
+            {
+                Console.Write($"{n}, ");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Le score du vainqueur est : " + max);
+            Thread.Sleep(5000);
+
+            Console.WriteLine("La vainqueur est : " + gagnant);
+        }
+
+        /// Création nuage
+        Nuage nuage = new Nuage(joueurs);
+        nuage.Creation();
+        
+       
     }
 
     static void TestDico()

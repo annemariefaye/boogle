@@ -100,5 +100,35 @@
         }
     }
 
+    public int GetScore(string mot)
+    {
+        mot = mot.ToUpper();
+        int total = 0;
+        int scoreTotal = 0;
+        Dictionary<char, int> pointLettre = new Dictionary<char, int>();
+        string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
+        chemin = Path.GetFullPath(chemin);
+        var lignes = File.ReadAllLines(chemin);
+        foreach (var ligne in lignes)
+        {
+            var parties = ligne.Split(';');
+            if (parties.Length == 3)
+            {
+                char lettre = parties[0][0];
+                int scorelettre = int.Parse(parties[1]);
+                pointLettre[lettre] = scorelettre;
+            }
+        }
+        foreach (char c in mot)
+        {
+            if (pointLettre.TryGetValue(c, out int score))
+            {
+                total += score;
+            }
+        }
+
+        return total;
+    }
+
 
 }
