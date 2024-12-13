@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 class Jeu
 {
@@ -10,7 +12,7 @@ class Jeu
         Console.WriteLine("Langue (fr)/Language (en): ");
         string langue = null;
 
-        while (langue != "fr" && langue != "en" )
+        while (langue != "fr" && langue != "en")
         {
             langue = Console.ReadLine().ToLower();
 
@@ -19,7 +21,7 @@ class Jeu
 
         /// Création des joueurs
 
-        
+
 
         int nbJoueurs = 0;
 
@@ -42,8 +44,8 @@ class Jeu
         }
         Console.Clear();
         Console.WriteLine($"Nombre de joueurs accepté : {nbJoueurs}");
-    
-        
+
+
 
         Joueur[] joueurs = new Joueur[nbJoueurs];
 
@@ -90,7 +92,27 @@ class Jeu
                 Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 4.");
             }
 
-        } while (taillePlateau < 4);
+            string nom;
+            do
+            {
+                Console.WriteLine($"Joueur {i + 1}, entrez votre nom :");
+                nom = Console.ReadLine();
+
+                if (nomsUtilises.Contains(nom))
+                {
+                    Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
+                }
+            } while (nomsUtilises.Contains(nom));
+
+            joueurs[i] = new Joueur(nom);
+            nomsUtilises.Add(nom); // Ajoute le nom à la liste des noms utilisés
+        }
+
+        Console.Clear();
+        Console.WriteLine("Liste des joueurs :");
+        foreach (var joueur in joueurs)
+        {
+            Console.WriteLine(joueur.Pseudo);
 
         Console.Clear();
 
@@ -114,7 +136,7 @@ class Jeu
         } while (nbTours < 1);
 
         Console.WriteLine($"Nombre de tours accepté : {nbTours}");
-        
+
 
 
 
@@ -123,24 +145,32 @@ class Jeu
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        for(int j=0; j< nbTours; j++) 
-        { 
-            for (int i = 0; i< nbJoueurs; i++)
+        for (int j = 0; j < nbTours; j++)
+        {
+            for (int i = 0; i < nbJoueurs; i++)
             {
                 Console.Clear();
                 Console.WriteLine($"C'est au tour de {joueurs[i].Pseudo}"); ///remplacer ToString par pseudo
 
-                plateau.AfficherPlateau();
-                stopwatch.Restart();
+        } while (nbTours < 1);
+
+        Console.WriteLine($"Nombre de tours accepté : {nbTours}");
+        
+
+
+
+        /// Création du chrono
+        int tempsLimite = 1;
 
                 while (stopwatch.Elapsed.TotalSeconds < tempsLimite)
-                { 
+                {
                     Console.WriteLine("Saisissez un nouveau mot");
                     string mot = Console.ReadLine().ToUpper();
 
                     bool dansPlateau = plateau.Test_Plateau(mot);
-                    bool dejaVu = joueurs[i].Contain(mot);
-                    if(!dejaVu && dansPlateau)
+                Console.Clear();
+                Console.WriteLine($"C'est au tour de {joueurs[i].Pseudo}"); ///remplacer ToString par pseudo
+                    if (!dejaVu && dansPlateau)
                     {
                         joueurs[i].Add_Mot(mot);
                         joueurs[i].UpdateScore(mot);
@@ -151,14 +181,25 @@ class Jeu
                     /// update le score et afficher le score a chaque tour
                     /// dire il reste combien de temps
                     /// Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);c
+                    if(!dejaVu && dansPlateau)
+                    {
+                        joueurs[i].Add_Mot(mot);
+                        joueurs[i].UpdateScore(mot);
+                        Console.WriteLine($"Le mot {mot} a rapporté : {joueurs[i].Score}");
+
+                    }
                 }
+
+                plateau.UpdatePlateau();
+                    /// Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);c
+                Thread.Sleep(000);
 
                 plateau.UpdatePlateau();
                 Console.WriteLine($"Le score de {joueurs[i].Pseudo} à la fin du tour est : {joueurs[i].Score}");
                 Thread.Sleep(000);
             }
         }
-        
+
         Console.Clear();
 
         Console.WriteLine("La partie est finie");
@@ -177,15 +218,15 @@ class Jeu
             }
 
             /// Si égalité des scores maximum
-            if(max == joueurs[i].Score)
+            if (max == joueurs[i].Score)
             {
                 gagnants.Add(joueurs[i].Pseudo);
                 gagnants.Add(gagnant);
             }
         }
-        
+
         /// Gestion de plusieurs gagnants ou pas
-        if(gagnants.Count>=2)
+        if (gagnants.Count >= 2)
         {
             Console.WriteLine("Le score des vainqueurs est : " + max);
             Thread.Sleep(5000);
@@ -207,8 +248,8 @@ class Jeu
         /// Création nuage
         Nuage nuage = new Nuage(joueurs);
         nuage.Creation();
-        
-       
+
+
     }
 
     static void TestDico()
