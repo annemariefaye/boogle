@@ -1,54 +1,103 @@
-Voici les parties dont tu devras t'occuper :
-- Classe Joueur
-- Classe De
+Voici le fichier `README.md` mis à jour pour inclure les instructions d'installation des dépendances via le gestionnaire de package NuGet :
 
-Mets des commentaires un peu partout (pour faire un commentaire écrit "///") 
+```markdown
+# Jeu de Mots
 
-Classe Joueur:
+## Description
+Le projet **Jeu de Mots** est un jeu interactif qui permet aux joueurs de proposer des mots sur un plateau. Les joueurs peuvent jouer contre une intelligence artificielle (IA) ou en mode multijoueur. Le but du jeu est de collecter des points en proposant des mots valides sur le plateau, tout en respectant un temps limité pour chaque tour.
 
-1. Crée les attributs "string pseudo", "int score" et "string[] mots" pour le joueur
+## Fonctionnalités
+- Choix de la langue (français ou anglais).
+- Possibilité de jouer avec une IA ou plusieurs joueurs humains.
+- Validation des mots proposés par rapport à un plateau de jeu.
+- Suivi des scores des joueurs.
+- Affichage du gagnant à la fin de la partie.
+
+## Installation
+Pour exécuter le jeu, vous devez avoir installé .NET sur votre machine.
+
+1. Clonez ce dépôt :
+   ```bash
+   git clone https://github.com/annemariefaye/boogle.git
+   cd boogle
+   ```
+
+2. Ouvrez le projet dans Visual Studio.
+
+3. Ouvrez la console du gestionnaire de package (Package Manager Console) dans Visual Studio :
+   - Allez dans **Tools** > **NuGet Package Manager** > **Package Manager Console**.
+
+4. Installez les dépendances nécessaires via le gestionnaire de package :
+   ```powershell
+   Install-Package KnowledgePicker.WordCloud
+   Install-Package SkiaSharp
+   ```
+
+5. Compilez le projet :
+   ```bash
+   dotnet build
+   ```
+
+6. Exécutez le jeu :
+   ```bash
+   dotnet run
+   ```
+
+## Utilisation
+Lorsque vous exécutez le programme, il vous demandera de :
+1. Sélectionner une langue (français ou anglais).
+2. Choisir si vous souhaitez jouer avec une IA.
+3. Définir la taille du plateau de jeu (minimum 4).
+4. Spécifier le nombre de joueurs (minimum 2 si aucune IA).
+5. Entrer les noms des joueurs.
+
+Ensuite, le jeu se déroule en tours, où chaque joueur propose des mots dans un temps limité. Les mots valides rapportent des points au joueur.
+
+### Exemple de déroulement :
+- "Langue (fr)/Language (en): "
+- "Voulez-vous jouer avec une IA ? : (Y/N)"
+- "Veuillez entrer la taille du plateau (min 4) : "
+- "Veuillez entrer le nombre de joueurs : "
+- "Saisissez un nouveau mot : "
+
+## Code Principal
+Voici un extrait du code principal du jeu :
+```csharp
+
+static void Main(string[] args)
+{
+    // Sélection de la langue
+    Console.WriteLine("Langue (fr)/Language (en): ");
+    string langue = null;
+
+    while (langue != "fr" && langue != "en")
+    {
+        langue = Console.ReadLine().ToLower();
+        if (langue != "fr" && langue != "en")
+        {
+            Console.WriteLine("Saisissez une langue valide");
+        }
+    }
+    Console.Clear();
+
+    // Récupération du nombre de joueurs
+    int nbJoueurs = 0;
+    // Reste du code pour initialiser le plateau et les joueurs...
+
+    // Début du jeu avec des tours...
+}
+```
+
+## Tests Unitaires
+Le projet inclut des tests unitaires pour vérifier les fonctionnalités principales, comme la validation des mots et le calcul des scores. Tous les tests ont réussi, assurant la fiabilité des fonctionnalités du jeu.
 
 
-2. Crée un constructeur Joueur avec le "pseudo", le "score du joueur en paramètre (string). N'oublie pas de créer le tableau de "mots" dans le constructeur. Fait les this.xxx aussi.
+## Acknowledgments
+- Ce projet utilise les bibliothèques .NET pour la gestion des entrées/sorties et le chronométrage.
 
-Essaie de limiter le nombre de caractères maximal à 20
-(Dans le futur il faudra vérifier si le pseudo n'est pas déjà pris mais je pense que ce sera à faire dans le Jeu.cs)
+```
 
+### Changements Apportés
+- Les instructions d'installation des dépendances `KnowledgePicker.WordCloud` et `SkiaSharp` ont été modifiées pour utiliser le gestionnaire de package NuGet à travers la console de Visual Studio.
 
-3. Crée les propriétés de lecture (avec get) pour "pseudo", "score" et "mots".
-
-
-4. Pour la méthode Contain(string mot) il faudra utiliser "int[] mots" et comparer chaque mot du tableau au "string mot"
-
-
-5. Pour la méthode Add_Mot(string mot), on ajoute le mot au tableau.
-
-Méthode 1 : Il faudra donc remplacer "mots". Créer un nouveau tableau de taille "tab.Length + 1". Copie les valeurs de "mots" dans le nouveau et ajoute le nouveau mot à la fin.
-
-Méthode 2 : Sinon tu peux utiliser :
-Array.Resize(ref this.mots, this.mots.Length + 1); ///Agrandit le tableau de 1
-this.mots[^1] = mot; ///Ajoute un mot à la dernière place du tableau qui est vide
-
-
-6. Pour la méthode toString(), return le "pseudo" du joueur et peut être la liste des mots trouvés (à voir je suis pas sûre)
-
-
-
-Classe De:
-
-1. Crée les attributs "char[] lettres", "char face"
-
-
-2. Crée un constructeur De sans paramètres. Fait le this.xxx aussi pour "lettres" et "face"
-
-
-3. Crée les propriétés de lecture (avec get) pour "lettres" et "face"
-
-
-4. Pour la méthode Lance(Random r). Utilise r.Next et modifie "this.face" (j'en dis pas plus pour l'instant débrouille toi)
-
-
-5. Pour la méthode toString(), return les "lettres" du dé et sa "face" actuelle
-
-
-
+Si vous avez besoin de plus d'informations ou d'autres modifications, n'hésitez pas à le faire savoir !

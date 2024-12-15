@@ -3,9 +3,11 @@ using Jeu;
 namespace JeuTest
 
 {
+    /// Voir les détails de ce fichier dans le rapport
     [TestClass]
     public class UnitTest1
     {
+        /// Méthode de la classe Joueur
         [TestMethod]
         public void TestGetScore()
         {
@@ -18,6 +20,7 @@ namespace JeuTest
             Assert.AreEqual(attendu, obtenu);
         }
 
+        /// Méthode de la classe Joueur
         [TestMethod]
         public void TestContain()
         {
@@ -32,7 +35,7 @@ namespace JeuTest
             Assert.AreEqual(attendu, obtenu);
         }
 
-
+        /// Méthode de la classe Plateau
         [TestMethod]
         public void TestTestPlateau()
         {
@@ -53,7 +56,7 @@ namespace JeuTest
 
         }
 
-
+        /// Méthode de la classe Dictionnaire
         [TestMethod]
         public void TestRechDichoRecursif()
         {
@@ -67,7 +70,7 @@ namespace JeuTest
             Assert.AreEqual(attendu, obtenu);
         }
 
-
+        /// Méthode de la classe Dictionnaire
         [TestMethod]
         public void TestRechercheHashset()
         {
