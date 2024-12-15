@@ -37,39 +37,39 @@ class Nuage
             }
         }
 
-        /// Pour cette partie nous avons suivie la documentation de WordCloud
-        const int k = 4; 
-        var wordCloud = new WordCloudInput(
-            frequences.Select(p => new WordCloudEntry(p.Key, p.Value)))
+        /// Pour cette partie nous avons suivie la documentation de KnowledgePicker.WordCloud
+        const int facteur = 4; 
+        var wc = new WordCloudInput(
+            frequences.Select(variable => new WordCloudEntry(variable.Key, variable.Value)))
         {
-            Width = 1024 * k,
-            Height = 1024 * k,
-            MinFontSize = 8 * k,
-            MaxFontSize = 32 * k
+            Width = 1024 * facteur,
+            Height = 1024 * facteur,
+            MinFontSize = 8 * facteur,
+            MaxFontSize = 32 * facteur
         };
-        var sizer = new LogSizer(wordCloud);
-        using var engine = new SkGraphicEngine(sizer, wordCloud);
-        var layout = new SpiralLayout(wordCloud);
-        var colorizer = new RandomColorizer();
-        var wcg = new WordCloudGenerator<SKBitmap>(wordCloud, engine, layout, colorizer);
+        var calibreur = new LogSizer(wc);
+        using var engin = new SkGraphicEngine(calibreur, wc);
+        var plan = new SpiralLayout(wc);
+        var colorisateur = new RandomColorizer();
+        var generator = new WordCloudGenerator<SKBitmap>(wc, engin, plan, colorisateur);
 
         /// Dessing de l'arrière plan en blanc
-        using var final = new SKBitmap(wordCloud.Width, wordCloud.Height);
-        using var canvas = new SKCanvas(final);
-        canvas.Clear(SKColors.White);
+        using var res = new SKBitmap(wc.Width, wc.Height);
+        using var image = new SKCanvas(res);
+        image.Clear(SKColors.White);
 
-        using var bitmap = wcg.Draw();
-        canvas.DrawBitmap(bitmap, 0, 0);
+        using var bitmap = generator.Draw();
+        image.DrawBitmap(bitmap, 0, 0);
 
         /// Sauvegarder dans le dossier de travail
-        var sourceFileDirectory = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
-        var fileName = "Cloud.png";
-        var filePath = Path.Combine(sourceFileDirectory, fileName);
+        var dossierTravail = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
+        var nom = "Cloud.png";
+        var chemin = Path.Combine(dossierTravail, nom);
 
         /// Sauvegarder l'image
-        using var data = final.Encode(SKEncodedImageFormat.Png, 100);
-        using var stream = File.OpenWrite(filePath);
-        data.SaveTo(stream);
+        using var donnees = res.Encode(SKEncodedImageFormat.Png, 100);
+        using var flux = File.OpenWrite(chemin);
+        donnees.SaveTo(flux);
 
         
         Console.WriteLine("Nuage sauvegardé");

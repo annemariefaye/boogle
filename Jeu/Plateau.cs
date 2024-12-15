@@ -3,7 +3,6 @@
 public class Plateau
 {
     ///Attributs
-    ///
     Dictionnaire dico;
     string langue;
     int taille;
