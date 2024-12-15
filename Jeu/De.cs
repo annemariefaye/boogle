@@ -14,7 +14,7 @@
         this.face = this.lettres[randomIndex];
 
     }
-    ///propriétés de lecture
+    ///Propriétés de lecture
     public char[] Lettres { get { return this.lettres; } }
     public char Face { get { return this.face; } }
 
@@ -22,12 +22,13 @@
 
     public void Lance()
     {
-        int randomIndex = this.random.Next() % 6; ///calcul manuel d'un index aléatoire
+        int randomIndex = this.random.Next() % 6; ///Calcul manuel d'un index aléatoire
         this.face = this.lettres[randomIndex];
 
 
     }
 
+    /// On retourne les 6 lettres du dé ainsi qude sa face visible
     public string toString()
     {
         string facesString = "";

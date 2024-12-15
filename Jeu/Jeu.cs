@@ -9,7 +9,6 @@ namespace Jeu
         {
 
             ///Sélection de la langue
-            ///
             Console.WriteLine("Langue (fr)/Language (en): ");
             string langue = null;
 
@@ -25,8 +24,9 @@ namespace Jeu
             Console.Clear();
 
 
-            int nbJoueurs = 0;
+            int nbJoueurs = 0; ///On initialise à 0 ici car on en a besoin si les utilisateurs sélectionnent l'IA car elle comptera comme joueur.
 
+            /// On choisi si on joue avec une IA ou non
             Console.WriteLine("Voulez-vous jouer avec une IA ? : (Y/N)");
             string YN = null;
 
@@ -41,7 +41,7 @@ namespace Jeu
 
             if (YN == "Y")
             {
-                nbJoueurs++;
+                nbJoueurs++; ///L'IA compte comme joueur
             }
             Console.Clear();
 
@@ -68,9 +68,9 @@ namespace Jeu
 
             Plateau plateau = new Plateau(langue, taillePlateau);
 
-            int indexCorrection = 0;
+            int indexCorrection = 0; /// Si on choisi l'IA on en aura besoin pour le choix des pseudos, car l'IA à déjà un nom sélectionné par défaut donc pas besoin de l'entre manuellement
 
-            /// Création des joueurs
+            /// Création des joueurs en fonction de si on choisi de jouer avec l'IA ou non
             if (YN == "Y")
             {
                 while (nbJoueurs - 1 < 1)
@@ -127,6 +127,7 @@ namespace Jeu
 
             HashSet<string> nomsUtilises = new HashSet<string>(); /// Pour vérifier si les noms sont uniques
 
+            /// Choix des pseudo pour chaque joueur (indiceCorrection sert uniquement si on a choisi de joueur avec l'IA)
             for (int i = 0; i < nbJoueurs + indexCorrection; i++)
             {
                 string nom;
@@ -147,7 +148,7 @@ namespace Jeu
 
             Console.Clear();
 
-            /// On crée l'IA
+            /// Instantiation de l'IA. Cela est effectué dans tous les cas pour garantir l'absence d'erreurs dans Visual Studio.
             IA monIA = new IA(plateau, langue);
             if (YN == "Y")
             {
@@ -155,6 +156,7 @@ namespace Jeu
             }
 
 
+            /// On affiche tous les joueurs
             Console.WriteLine("Liste des joueurs :");
             foreach (var joueur in joueurs)
             {
@@ -164,7 +166,7 @@ namespace Jeu
             Console.WriteLine();
 
 
-
+            /// Sélection du nombre de tour
             int nbTours;
 
             do
@@ -185,25 +187,30 @@ namespace Jeu
 
 
             /// Création du chrono
-            int tempsLimite = 10;  /// En secondes
+            int tempsLimite = 30;  /// En secondes
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
+
+            /// Ici se trouve toute la méchanique du jeu
+            /// Chaque joueur aura un temps limité pour trouver un maximum de mots puis on passe au joueur suivant et ainsi de suite
+            /// Le plateau est randomisé à chaque changement de joueurs pour un maximum d'équité
             for (int j = 0; j < nbTours; j++)
             {
                 foreach (Joueur joueur in joueurs)
                 {
                     Console.Clear();
-                    Console.WriteLine("Tour " + j + 1);
+                    Console.WriteLine("Tour " + (j + 1) );
 
                     Console.WriteLine($"C'est au tour de {joueur.Pseudo}");
 
-                    plateau.AfficherPlateau();
+                   
                     stopwatch.Restart();
 
 
                     while (stopwatch.Elapsed.TotalSeconds < tempsLimite)
                     {
+                        plateau.AfficherPlateau(); ///On réaffiche le tableau car il ne sera plus visible si beaucoup de mots sont entrés
                         string mot;
                         if (joueur.Pseudo != "IA")
                         {
@@ -216,7 +223,8 @@ namespace Jeu
                             mot = monIA.MotIA();
                             Console.Clear();
                             Console.WriteLine(mot + " a été choisi par l'IA.");
-                            Thread.Sleep(2000);
+                            Thread.Sleep(2000); /// Petite pause pour voir le mot de l'IA avant de Clear() la console
+                            tempsLimite += 2; ///Pour compenser le temps perdu avec Time.Sleep pour plus d'équité
                         }
 
 
@@ -234,7 +242,7 @@ namespace Jeu
 
                     plateau.UpdatePlateau();
                     Console.WriteLine($"Le score de {joueur.Pseudo} à la fin du tour est : {joueur.Score}");
-                    Thread.Sleep(3000);
+                    Thread.Sleep(3000); /// Petite pause pour voir le score du joueur avant de Clear() la console
                 }
             }
 
@@ -245,7 +253,7 @@ namespace Jeu
             /// Comparer les scores des joueurs 
             int max = joueurs[0].Score;
             string gagnant = joueurs[0].Pseudo;
-            HashSet<string> gagnants = new HashSet<string>(); ///Pour éviter les doublons
+            HashSet<string> gagnants = new HashSet<string>(); /// Pour éviter les doublons
             for (int i = 0; i < nbJoueurs; i++)
             {
                 if (max < joueurs[i].Score)
@@ -290,8 +298,11 @@ namespace Jeu
 
         }
 
+
+        /// Test des 3 méthodes de recherche dans le dictionnaire avec un chronomètre pour regarder la méthode la plus efficace.
         static void TestDico()
         {
+            
             Dictionnaire dico = new Dictionnaire("fr");
 
             Console.WriteLine(dico.toString());

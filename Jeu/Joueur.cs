@@ -40,6 +40,7 @@
         return con;
     }
 
+    /// On ajoute le mot à au tableau de mot si il n'existe pas déjà dans le tableau
     public void Add_Mot(string mot)
     {
         if (!Contain(mot))
@@ -49,10 +50,10 @@
             {
                 nouveauxMots[i] = this.mots[i];
             }
-            nouveauxMots[this.mots.Length] = mot; // ajouter le nouveau mot
-            this.mots = nouveauxMots; // mise à jour du tableau
+            nouveauxMots[this.mots.Length] = mot; /// Ajouter le nouveau mot
+            this.mots = nouveauxMots; /// Mise à jour du tableau
             Console.WriteLine($"Le mot {mot} est valide");
-            this.score++; // mise à jour du score
+            this.score++; /// Mise à jour du score
 
         }
         else
@@ -74,6 +75,8 @@
         return "Joueur: " + this.pseudo + "Score: " + this.score + "Mots trouvés: " + chaine;
     }
 
+    /// On calcule le nombre de points que rapporte un mot grâce à un dictionnaire Dictionary<char, int> associant chaque char à un nombre de points
+    /// Ensuite on actualise le score du joueur avec this.score
     public void UpdateScore(string mot)
     {
         mot = mot.ToUpper();
@@ -100,6 +103,8 @@
         }
     }
 
+    /// On calcule et on retourne le nombre de points que rapporte un mot grâce à un dictionnaire Dictionary<char, int> associant chaque char à un nombre de points
+    /// C'est casiment la même fonction que UpdateScore sauf qu'on retourne un int
     public int GetScore(string mot)
     {
         mot = mot.ToUpper();

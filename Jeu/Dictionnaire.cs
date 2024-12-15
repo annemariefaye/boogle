@@ -150,7 +150,7 @@ public class Dictionnaire
     }
 
 
-    /// Vérifie en une ligne si le mot appartient au dictionnaire avec une complexité de O(1)
+    /// Vérifie en une ligne si le mot appartient au dictionnaire avec une complexité de O(1) dans le meilleur des cas
     public bool RechercheHashSet(string mot)
     {
         return this.mots.Contains(mot.ToUpper());  
