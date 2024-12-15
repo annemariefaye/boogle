@@ -1,4 +1,4 @@
-﻿class Joueur
+﻿public class Joueur
 {
     ///1)Attributs
     string pseudo;
@@ -12,7 +12,7 @@
         this.pseudo = pseudo;
         while (this.pseudo.Length >= 20)
         {
-            Console.WriteLine("pseudo trop grand, veuillez réentrer le pseudo");///mettre un accent sur reentrer
+            Console.WriteLine("pseudo trop grand, veuillez réentrer le pseudo");
             this.pseudo = Console.ReadLine();
         }
         this.score = 0;
@@ -53,6 +53,7 @@
             this.mots = nouveauxMots; // mise à jour du tableau
             Console.WriteLine($"Le mot {mot} est valide");
             this.score++; // mise à jour du score
+
         }
         else
         {
@@ -76,7 +77,6 @@
     public void UpdateScore(string mot)
     {
         mot = mot.ToUpper();
-        int scoreTotal = 0;
         Dictionary<char, int> pointLettre = new Dictionary<char, int>();
         string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
         chemin = Path.GetFullPath(chemin);
@@ -104,7 +104,6 @@
     {
         mot = mot.ToUpper();
         int total = 0;
-        int scoreTotal = 0;
         Dictionary<char, int> pointLettre = new Dictionary<char, int>();
         string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
         chemin = Path.GetFullPath(chemin);
@@ -129,6 +128,5 @@
 
         return total;
     }
-
 
 }

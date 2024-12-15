@@ -1,312 +1,335 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 
-class Jeu
+namespace Jeu 
 {
-    static void Main(string[] args)
+    public class Jeu
     {
-        ///Sélection de la langue
-        ///
-        Console.WriteLine("Langue (fr)/Language (en): ");
-        string langue = null;
-
-        while (langue != "fr" && langue != "en")
+        static void Main(string[] args)
         {
-            langue = Console.ReadLine().ToLower();
 
-        }
-        Console.Clear();
+            ///Sélection de la langue
+            ///
+            Console.WriteLine("Langue (fr)/Language (en): ");
+            string langue = null;
 
-        /// Création des joueurs
-
-
-
-        int nbJoueurs = 0;
-
-        while (nbJoueurs < 2)
-        {
-            Console.WriteLine("Veuillez entrer le nombre de joueurs (2 minimum) : ");
-            string input = Console.ReadLine();
-
-            if (int.TryParse(input, out nbJoueurs))
+            while (langue != "fr" && langue != "en")
             {
-                if (nbJoueurs < 3)
+                langue = Console.ReadLine().ToLower();
+                if (langue != "fr" && langue != "en")
                 {
-                    Console.WriteLine("Le nombre de joueurs doit être au moins 2.");
+                    Console.WriteLine("Saissisez une langue valide");
+                }
+
+            }
+            Console.Clear();
+
+
+            int nbJoueurs = 0;
+
+            Console.WriteLine("Voulez-vous jouer avec une IA ? : (Y/N)");
+            string YN = null;
+
+            while (YN != "Y" && YN != "N")
+            {
+                YN = Console.ReadLine().ToUpper();
+                if (YN != "Y" && YN != "N")
+                {
+                    Console.WriteLine("Saissisez 'Y' ou 'N'");
+                }
+            }
+
+            if (YN == "Y")
+            {
+                nbJoueurs++;
+            }
+            Console.Clear();
+
+            /// Creation du plateau
+
+            int taillePlateau = 0;
+
+            do
+            {
+                Console.WriteLine("Veuillez entrer la taille du plateau (min 4) : ");
+                string input = Console.ReadLine();
+
+                if (!int.TryParse(input, out taillePlateau) || taillePlateau < 4)
+                {
+                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 4.");
+                }
+
+            } while (taillePlateau < 4);
+
+
+            Console.Clear();
+
+            Console.WriteLine($"Taille du plateau acceptée : {taillePlateau}");
+
+            Plateau plateau = new Plateau(langue, taillePlateau);
+
+            int indexCorrection = 0;
+
+            /// Création des joueurs
+            if (YN == "Y")
+            {
+                while (nbJoueurs - 1 < 1)
+                {
+                    Console.WriteLine("Veuillez entrer le nombre de joueurs : ");
+                    string input = Console.ReadLine();
+
+                    if (int.TryParse(input, out int joueursSup))
+                    {
+                        if (joueursSup > 0)
+                        {
+                            nbJoueurs += joueursSup; /// Ajoute les joueurs supplémentaires
+                        }
+                        else
+                        {
+                            Console.WriteLine("Veuillez entrer un nombre positif.");
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Veuillez entrer un nombre valide.");
+                    }
+                }
+                Console.Clear();
+                Console.WriteLine($"Nombre de joueurs accepté : {nbJoueurs}");
+                indexCorrection = -1;
+            }
+
+            else
+            {
+                while (nbJoueurs < 2)
+                {
+                    Console.WriteLine("Veuillez entrer le nombre de joueurs (2 minimum) : ");
+                    string input = Console.ReadLine();
+
+                    if (int.TryParse(input, out nbJoueurs))
+                    {
+                        Console.WriteLine("Le nombre de joueurs doit être au moins 2.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Veuillez entrer un nombre valide.");
+                    }
+                }
+                Console.Clear();
+                Console.WriteLine($"Nombre de joueurs accepté : {nbJoueurs}");
+
+            }
+
+            Joueur[] joueurs = new Joueur[nbJoueurs];
+
+
+
+            HashSet<string> nomsUtilises = new HashSet<string>(); /// Pour vérifier si les noms sont uniques
+
+            for (int i = 0; i < nbJoueurs + indexCorrection; i++)
+            {
+                string nom;
+                do
+                {
+                    Console.WriteLine($"Joueur {i + 1}, entrez votre nom :");
+                    nom = Console.ReadLine();
+
+                    if (nomsUtilises.Contains(nom))
+                    {
+                        Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
+                    }
+                } while (nomsUtilises.Contains(nom));
+
+                joueurs[i] = new Joueur(nom);
+                nomsUtilises.Add(nom); /// Ajoute le nom à la liste des noms utilisés
+            }
+
+            Console.Clear();
+
+            /// On crée l'IA
+            IA monIA = new IA(plateau, langue);
+            if (YN == "Y")
+            {
+                joueurs[joueurs.Length - 1] = monIA;
+            }
+
+
+            Console.WriteLine("Liste des joueurs :");
+            foreach (var joueur in joueurs)
+            {
+                Console.WriteLine(joueur.Pseudo);
+            }
+
+            Console.WriteLine();
+
+
+
+            int nbTours;
+
+            do
+            {
+                Console.WriteLine("Veuillez entrer le nombre de tours (min 1) : ");
+                string input = Console.ReadLine();
+
+                if (!int.TryParse(input, out nbTours) || nbTours < 1)
+                {
+                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 1.");
+                }
+
+            } while (nbTours < 1);
+
+            Console.WriteLine($"Nombre de tours accepté : {nbTours}");
+
+
+
+
+            /// Création du chrono
+            int tempsLimite = 10;  /// En secondes
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            for (int j = 0; j < nbTours; j++)
+            {
+                foreach (Joueur joueur in joueurs)
+                {
+                    Console.Clear();
+                    Console.WriteLine("Tour " + j + 1);
+
+                    Console.WriteLine($"C'est au tour de {joueur.Pseudo}");
+
+                    plateau.AfficherPlateau();
+                    stopwatch.Restart();
+
+
+                    while (stopwatch.Elapsed.TotalSeconds < tempsLimite)
+                    {
+                        string mot;
+                        if (joueur.Pseudo != "IA")
+                        {
+                            Console.WriteLine("Saisissez un nouveau mot");
+                            mot = Console.ReadLine().ToUpper();
+                        }
+
+                        else
+                        {
+                            mot = monIA.MotIA();
+                            Console.Clear();
+                            Console.WriteLine(mot + " a été choisi par l'IA.");
+                            Thread.Sleep(2000);
+                        }
+
+
+                        bool dansPlateau = plateau.Test_Plateau(mot);
+                        bool dejaVu = joueur.Contain(mot);
+                        if (!dejaVu && dansPlateau)
+                        {
+                            joueur.Add_Mot(mot);
+                            joueur.UpdateScore(mot);
+                            Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}");
+
+                        }
+
+                    }
+
+                    plateau.UpdatePlateau();
+                    Console.WriteLine($"Le score de {joueur.Pseudo} à la fin du tour est : {joueur.Score}");
+                    Thread.Sleep(3000);
+                }
+            }
+
+            Console.Clear();
+
+            Console.WriteLine("La partie est finie");
+
+            /// Comparer les scores des joueurs 
+            int max = joueurs[0].Score;
+            string gagnant = joueurs[0].Pseudo;
+            HashSet<string> gagnants = new HashSet<string>(); ///Pour éviter les doublons
+            for (int i = 0; i < nbJoueurs; i++)
+            {
+                if (max < joueurs[i].Score)
+                {
+                    max = joueurs[i].Score;
+                    gagnant = joueurs[i].Pseudo;
+                    gagnants = new HashSet<string>();
+                }
+
+                /// Si égalité des scores maximum
+                if (max == joueurs[i].Score)
+                {
+                    gagnants.Add(joueurs[i].Pseudo);
+                    gagnants.Add(gagnant);
+                }
+            }
+
+            /// Gestion de plusieurs gagnants ou pas
+            if (gagnants.Count >= 2)
+            {
+                Console.WriteLine("Le score des vainqueurs est : " + max);
+                Thread.Sleep(5000);
+
+                Console.WriteLine("Les gagnant sont : ");
+                foreach (string n in gagnants)
+                {
+                    Console.Write($"{n}, ");
                 }
             }
             else
             {
-                Console.WriteLine("Veuillez entrer un nombre valide.");
-            }
-        }
-        Console.Clear();
-        Console.WriteLine($"Nombre de joueurs accepté : {nbJoueurs}");
+                Console.WriteLine("Le score du vainqueur est : " + max);
+                Thread.Sleep(5000);
 
-
-
-        Joueur[] joueurs = new Joueur[nbJoueurs];
-
-        HashSet<string> nomsUtilises = new HashSet<string>(); // Pour vérifier les noms uniques
-
-        for (int i = 0; i < nbJoueurs; i++)
-        {
-            string nom;
-            do
-            {
-                Console.WriteLine($"Joueur {i + 1}, entrez votre nom :");
-                nom = Console.ReadLine();
-
-                if (nomsUtilises.Contains(nom))
-                {
-                    Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
-                }
-            } while (nomsUtilises.Contains(nom));
-
-            joueurs[i] = new Joueur(nom);
-            nomsUtilises.Add(nom); // Ajoute le nom à la liste des noms utilisés
-        }
-
-        Console.Clear();
-        Console.WriteLine("Liste des joueurs :");
-        foreach (var joueur in joueurs)
-        {
-            Console.WriteLine(joueur.Pseudo);
-        }
-
-        Console.WriteLine();
-
-        /// Creation du plateau
-
-        int taillePlateau = 0;
-
-        do
-        {
-            Console.WriteLine("Veuillez entrer la taille du plateau (min 4) : ");
-            string input = Console.ReadLine();
-
-            if (!int.TryParse(input, out taillePlateau) || taillePlateau < 4)
-            {
-                Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 4.");
+                Console.WriteLine("La vainqueur est : " + gagnant);
             }
 
-            string nom;
-            do
-            {
-                Console.WriteLine($"Joueur {i + 1}, entrez votre nom :");
-                nom = Console.ReadLine();
+            /// Création nuage
+            Nuage nuage = new Nuage(joueurs);
+            nuage.Creation();
 
-                if (nomsUtilises.Contains(nom))
-                {
-                    Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
-                }
-            } while (nomsUtilises.Contains(nom));
 
-            joueurs[i] = new Joueur(nom);
-            nomsUtilises.Add(nom); // Ajoute le nom à la liste des noms utilisés
         }
 
-        Console.Clear();
-        Console.WriteLine("Liste des joueurs :");
-        foreach (var joueur in joueurs)
+        static void TestDico()
         {
-            Console.WriteLine(joueur.Pseudo);
+            Dictionnaire dico = new Dictionnaire("fr");
 
-        Console.Clear();
+            Console.WriteLine(dico.toString());
 
-        Console.WriteLine($"Taille du plateau acceptée : {taillePlateau}");
-
-        Plateau plateau = new Plateau(langue, taillePlateau);
-
-
-        int nbTours;
-
-        do
-        {
-            Console.WriteLine("Veuillez entrer le nombre de tours (min 1) : ");
-            string input = Console.ReadLine();
-
-            if (!int.TryParse(input, out nbTours) || nbTours < 1)
-            {
-                Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 1.");
-            }
-
-        } while (nbTours < 1);
-
-        Console.WriteLine($"Nombre de tours accepté : {nbTours}");
+            string vraiMot = "bonjour";
+            string fauxMot = "hjehrj";
 
 
+            Stopwatch stopwatch = new Stopwatch();
 
+            stopwatch.Start();
+            Console.WriteLine($"{vraiMot} exite dans RechercheLinéraire : " + dico.RechercheLineaire(vraiMot));
+            stopwatch.Stop();
+            Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
 
-        /// Création du chrono
-        int tempsLimite = 1;
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
+            stopwatch.Restart();
+            Console.WriteLine($"{vraiMot} exite dans RechercheBinaire : " + dico.RechercheBinaire(vraiMot));
+            stopwatch.Stop();
+            Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
 
-        for (int j = 0; j < nbTours; j++)
-        {
-            for (int i = 0; i < nbJoueurs; i++)
-            {
-                Console.Clear();
-                Console.WriteLine($"C'est au tour de {joueurs[i].Pseudo}"); ///remplacer ToString par pseudo
+            stopwatch.Restart();
+            Console.WriteLine($"{vraiMot} exite dans RechercheHashSet : " + dico.RechercheHashSet(vraiMot));
+            stopwatch.Stop();
+            Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
 
-        } while (nbTours < 1);
+            stopwatch.Restart();
+            Console.WriteLine($"{vraiMot} exite dans RecherDicoRécursif : " + dico.RechDichoRecursif(vraiMot));
+            stopwatch.Stop();
+            Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
 
-        Console.WriteLine($"Nombre de tours accepté : {nbTours}");
-        
+            Console.WriteLine();
 
-
-
-        /// Création du chrono
-        int tempsLimite = 1;
-
-                while (stopwatch.Elapsed.TotalSeconds < tempsLimite)
-                {
-                    Console.WriteLine("Saisissez un nouveau mot");
-                    string mot = Console.ReadLine().ToUpper();
-
-                    bool dansPlateau = plateau.Test_Plateau(mot);
-                Console.Clear();
-                Console.WriteLine($"C'est au tour de {joueurs[i].Pseudo}"); ///remplacer ToString par pseudo
-                    if (!dejaVu && dansPlateau)
-                    {
-                        joueurs[i].Add_Mot(mot);
-                        joueurs[i].UpdateScore(mot);
-                        Console.WriteLine($"Le mot {mot} a rapporté : {joueurs[i].Score}");
-
-                    }
-                    /// Conditon pour voir si dansPlateau == true et dejaVu == false
-                    /// update le score et afficher le score a chaque tour
-                    /// dire il reste combien de temps
-                    /// Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);c
-                    if(!dejaVu && dansPlateau)
-                    {
-                        joueurs[i].Add_Mot(mot);
-                        joueurs[i].UpdateScore(mot);
-                        Console.WriteLine($"Le mot {mot} a rapporté : {joueurs[i].Score}");
-
-                    }
-                }
-
-                plateau.UpdatePlateau();
-                    /// Console.WriteLine(tempsLimite - stopwatch.Elapsed.TotalSeconds);c
-                Thread.Sleep(000);
-
-                plateau.UpdatePlateau();
-                Console.WriteLine($"Le score de {joueurs[i].Pseudo} à la fin du tour est : {joueurs[i].Score}");
-                Thread.Sleep(000);
-            }
+            Console.WriteLine($"{fauxMot} exite dans RechercheLinéraire : " + dico.RechercheLineaire(fauxMot));
+            Console.WriteLine($"{fauxMot} exite dans RechercheBinaire : " + dico.RechercheBinaire(fauxMot));
+            Console.WriteLine($"{fauxMot} exite dans RechercheHashSet : " + dico.RechercheHashSet(fauxMot));
+            Console.WriteLine($"{fauxMot} exite dans RecherDicoRécursif : " + dico.RechDichoRecursif(fauxMot));
         }
-
-        Console.Clear();
-
-        Console.WriteLine("La partie est finie");
-
-        /// Comparer les scores des joueurs 
-        int max = joueurs[0].Score;
-        string gagnant = joueurs[0].Pseudo;
-        HashSet<string> gagnants = new HashSet<string>(); ///Pour éviter les doublons
-        for (int i = 0; i < nbJoueurs; i++)
-        {
-            if (max < joueurs[i].Score)
-            {
-                max = joueurs[i].Score;
-                gagnant = joueurs[i].Pseudo;
-                gagnants = new HashSet<string>();
-            }
-
-            /// Si égalité des scores maximum
-            if (max == joueurs[i].Score)
-            {
-                gagnants.Add(joueurs[i].Pseudo);
-                gagnants.Add(gagnant);
-            }
-        }
-
-        /// Gestion de plusieurs gagnants ou pas
-        if (gagnants.Count >= 2)
-        {
-            Console.WriteLine("Le score des vainqueurs est : " + max);
-            Thread.Sleep(5000);
-
-            Console.WriteLine("Les gagnant sont : ");
-            foreach (string n in gagnants)
-            {
-                Console.Write($"{n}, ");
-            }
-        }
-        else
-        {
-            Console.WriteLine("Le score du vainqueur est : " + max);
-            Thread.Sleep(5000);
-
-            Console.WriteLine("La vainqueur est : " + gagnant);
-        }
-
-        /// Création nuage
-        Nuage nuage = new Nuage(joueurs);
-        nuage.Creation();
 
 
     }
-
-    static void TestDico()
-    {
-        Dictionnaire dico = new Dictionnaire("fr");
-
-        Console.WriteLine(dico.toString());
-
-        string vraiMot = "bonjour";
-        string fauxMot = "hjehrj";
-
-
-        Stopwatch stopwatch = new Stopwatch();
-
-        stopwatch.Start();
-        Console.WriteLine($"{vraiMot} exite dans RechercheLinéraire : " + dico.RechercheLineaire(vraiMot));
-        stopwatch.Stop();
-        Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
-
-        stopwatch.Restart();
-        Console.WriteLine($"{vraiMot} exite dans RechercheBinaire : " + dico.RechercheBinaire(vraiMot));
-        stopwatch.Stop();
-        Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
-
-        stopwatch.Restart();
-        Console.WriteLine($"{vraiMot} exite dans RechercheHashSet : " + dico.RechercheHashSet(vraiMot));
-        stopwatch.Stop();
-        Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
-
-        stopwatch.Restart();
-        Console.WriteLine($"{vraiMot} exite dans RecherDicoRécursif : " + dico.RechDichoRecursif(vraiMot));
-        stopwatch.Stop();
-        Console.WriteLine("Temps écoulé : " + stopwatch.ElapsedTicks + " ticks");
-
-        Console.WriteLine();
-
-        Console.WriteLine($"{fauxMot} exite dans RechercheLinéraire : " + dico.RechercheLineaire(fauxMot));
-        Console.WriteLine($"{fauxMot} exite dans RechercheBinaire : " + dico.RechercheBinaire(fauxMot));
-        Console.WriteLine($"{fauxMot} exite dans RechercheHashSet : " + dico.RechercheHashSet(fauxMot));
-        Console.WriteLine($"{fauxMot} exite dans RecherDicoRécursif : " + dico.RechDichoRecursif(fauxMot));
-
-
-        De[] des = new De[6];
-
-        des[0] = new De(new char[] { 'E', 'L', 'I', 'L', 'A', 'T' });
-        des[1] = new De(new char[] { 'B', 'F', 'L', 'P', 'O', 'Z' });
-        des[2] = new De(new char[] { 'C', 'M', 'R', 'S', 'K', 'J' });
-        des[3] = new De(new char[] { 'E', 'H', 'N', 'Q', 'W', 'X' });
-        des[4] = new De(new char[] { 'U', 'V', 'Y', 'T', 'F', 'Z' });
-        des[5] = new De(new char[] { 'A', 'D', 'I', 'G', 'I', 'Y' });
-
-        Plateau plateau = new Plateau("fr", 5);
-        string motExiste = "elle";
-        Console.WriteLine($"{motExiste} est dans le plateau : " + plateau.Test_Plateau(motExiste));
-        motExiste = "le";
-        Console.WriteLine($"{motExiste} est dans le plateau : " + plateau.Test_Plateau(motExiste));
-    }
-
-
 }

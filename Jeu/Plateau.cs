@@ -1,6 +1,6 @@
 ﻿using System;
 
-class Plateau
+public class Plateau
 {
     ///Attributs
     ///
@@ -96,6 +96,28 @@ class Plateau
 
     }
 
+    /// Creation de Grille pour les TestUnitaires uniquement
+    public char[,] Grille
+    {
+        get => this.grille;
+        set
+        {
+            /// On checke que la matrice n'est pas null
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value), "La grille ne peut pas être null.");
+            }
+
+            /// On vérifie que la taille est au moins 4x4
+            if (value.GetLength(0) < 4 || value.GetLength(1) < 4)
+            {
+                throw new ArgumentException("La grille doit être au moins 3x3.");
+            }
+
+            this.grille = value;
+        }
+    }
+
 
     ///Méthodes obligatoires
 
@@ -127,7 +149,7 @@ class Plateau
 
         if (!trouveDansGrille)
         {
-            Console.WriteLine("Le mot n'est pas dans la grille");
+            Console.WriteLine($"{mot} n'est pas dans la grille");
         }
 
         /// On checke si le mot est dans le dico
@@ -135,7 +157,7 @@ class Plateau
 
         if (!dansDico)
         {
-            Console.WriteLine("Le mot n'est pas dans le dictionnaire");
+            Console.WriteLine($"{mot} n'est pas dans le dictionnaire");
         }
 
         return trouveDansGrille && dansDico;

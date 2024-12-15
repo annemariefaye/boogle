@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-class Dictionnaire
+public class Dictionnaire
 {
     ///Attributs
     TriDico dico;
@@ -17,7 +17,6 @@ class Dictionnaire
         this.mots = new HashSet<string>(this.dico.Mots); ///On crée un HashSet() des mots du dictionnaire : Hashset (table de hachage) permet de chercher sans même trier le dictionnaire et ne prend pas en compte les duplicatas -> économie de temps
         this.dico.OrderBy();
     }
-
 
 
     ///Méthodes obligatoires

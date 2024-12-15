@@ -1,4 +1,4 @@
-﻿class De
+﻿public class De
 {
     ///Attributs
     char[] lettres;
