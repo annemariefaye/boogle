@@ -1,5 +1,3 @@
-Voici le fichier `README.md` mis à jour pour inclure les instructions d'installation des dépendances via le gestionnaire de package NuGet :
-
 ```markdown
 # Jeu de Mots
 
