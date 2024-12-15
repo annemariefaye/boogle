@@ -2,11 +2,11 @@
 # Boogle
 
 ## Description
-Le projet **Jeu de Mots** est un jeu interactif qui permet aux joueurs de proposer des mots sur un plateau. Les joueurs peuvent jouer contre une intelligence artificielle (IA) ou en mode multijoueur. Le but du jeu est de collecter des points en proposant des mots valides sur le plateau, tout en respectant un temps limité pour chaque tour.
+Le projet **Boogle** est un jeu interactif qui permet aux joueurs de proposer des mots sur un plateau. Les joueurs peuvent jouer contre une intelligence artificielle (IA) ou en mode multijoueur. Le but du jeu est de collecter des points en proposant des mots valides sur le plateau, tout en respectant un temps limité pour chaque tour.
 
 ## Fonctionnalités
 - Choix de la langue (français ou anglais).
-- Possibilité de jouer avec une IA ou plusieurs joueurs humains.
+- Possibilité de jouer avec une IA et/ou plusieurs joueurs humains.
 - Validation des mots proposés par rapport à un plateau de jeu.
 - Suivi des scores des joueurs.
 - Affichage du gagnant à la fin de la partie.
