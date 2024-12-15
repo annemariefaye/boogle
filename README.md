@@ -1,5 +1,5 @@
 ```markdown
-# Jeu de Mots
+# Boogle
 
 ## Description
 Le projet **Jeu de Mots** est un jeu interactif qui permet aux joueurs de proposer des mots sur un plateau. Les joueurs peuvent jouer contre une intelligence artificielle (IA) ou en mode multijoueur. Le but du jeu est de collecter des points en proposant des mots valides sur le plateau, tout en respectant un temps limité pour chaque tour.
