@@ -43,7 +43,7 @@ public class Plateau
         Random rand = new Random();
         List<char> listeLettres = new List<char>();
 
-        // On crée un liste qui ajoute les lettres en fonctions de combien sont autorisées la plateau (par exemple 5 "a" va donner : [a,a,a,a,a])
+        /// On crée un liste qui ajoute les lettres en fonctions de combien sont autorisées la plateau (par exemple 5 "a" va donner : [a,a,a,a,a])
         foreach (var x in lettresDispo)
         {
             char lettre = x.Key;
@@ -55,7 +55,7 @@ public class Plateau
             }
         }
 
-        // On mélange la liste avec un tri à bulle mais avec un index aléatoire
+        /// On mélange la liste avec un tri à bulle mais avec un index aléatoire
         for (int i = listeLettres.Count - 1; i > 0; i--)
         {
             int j = rand.Next(i + 1);
@@ -65,13 +65,13 @@ public class Plateau
             listeLettres[j] = temp;
         }
 
-        // On crée les dés en fonction des lettres dans la listeLettres on ajoute les lettres une à une
+        /// On crée les dés en fonction des lettres dans la listeLettres on ajoute les lettres une à une
         int index = 0;
         for (int i = 0; i < this.des.Length; i++)
         {
             char[] faceLettres = new char[6];
 
-            for (int j = 0; j < 6; j++) // Chaque dé a 6 faces
+            for (int j = 0; j < 6; j++) /// Chaque dé a 6 faces
             {
                 if (index < listeLettres.Count)
                 {

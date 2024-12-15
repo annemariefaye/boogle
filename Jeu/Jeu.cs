@@ -223,6 +223,7 @@ namespace Jeu
                             mot = monIA.MotIA();
                             Console.Clear();
                             Console.WriteLine(mot + " a été choisi par l'IA.");
+                            Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}"); /// On le remet ici car il ne sera pas visible plus tard à cause de la vitesse de l'IA
                             Thread.Sleep(2000); /// Petite pause pour voir le mot de l'IA avant de Clear() la console
                             tempsLimite += 2; ///Pour compenser le temps perdu avec Time.Sleep pour plus d'équité
                         }
@@ -240,6 +241,7 @@ namespace Jeu
 
                     }
 
+                    Console.WriteLine();
                     plateau.UpdatePlateau();
                     Console.WriteLine($"Le score de {joueur.Pseudo} à la fin du tour est : {joueur.Score}");
                     Thread.Sleep(3000); /// Petite pause pour voir le score du joueur avant de Clear() la console
