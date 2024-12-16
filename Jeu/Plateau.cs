@@ -168,7 +168,7 @@ public class Plateau
     {
 
         /// Si le mot est fini
-        if (index + 1 >= mot.Length)
+        if (index == mot.Length)
         {
             return true;
         }
