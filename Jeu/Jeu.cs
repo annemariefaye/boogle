@@ -182,12 +182,35 @@ namespace Jeu
             } while (nbTours < 1);
 
             Console.WriteLine($"Nombre de tours accepté : {nbTours}");
+            Console.WriteLine();
+
+
+            /// Sélection du temps par tour 
+            int tempsLimite = 60;  /// En secondes
+
+            do
+            {
+                Console.WriteLine("Veuillez entrer le temps par tour (en secondes) : ");
+                string input = Console.ReadLine();
+                Console.Clear();
+
+                if (!int.TryParse(input, out tempsLimite) || tempsLimite < 1)
+                {
+                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 1.");
+                }
+                if (!int.TryParse(input, out tempsLimite) || tempsLimite > 1)
+                {
+                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier inférieur ou égal à 300.");
+                }
+
+            } while (tempsLimite < 1 || tempsLimite > 301);
+
+            Console.WriteLine($"Temps par tour accepté : {nbTours}s");
 
 
 
 
             /// Création du chrono
-            int tempsLimite = 30;  /// En secondes
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
