@@ -14,7 +14,7 @@ public class Dictionnaire
     {
         this.langue = langue;
         this.dico = new TriDico(this.langue);
-        this.mots = new HashSet<string>(this.dico.Mots); ///On crée un HashSet() des mots du dictionnaire : Hashset (table de hachage) permet de chercher sans même trier le dictionnaire et ne prend pas en compte les duplicatas -> économie de temps
+        this.mots = new HashSet<string>(this.dico.Mots); ///On crée un HashSet() des mots du dictionnaire : Hashset (table de hachage) permet de chercher sans même trier le dictionnaire et ne prend pas en compte les duplicatas -> économie de temps. Mais ici ça ne sert à rien les mots osntdéjà trié pour les autres méthodes nécessitant un tri préalable.
         this.dico.OrderBy();
     }
 
