@@ -84,6 +84,7 @@
     {
         mot = mot.ToUpper();
         float coeff = 1 + (mot.Length / 10.0f) - 0.2f;
+        int total;
         Dictionary<char, int> pointLettre = new Dictionary<char, int>();
         string chemin;
         if (this.langue == "fr")
@@ -110,10 +111,12 @@
         {
             if (pointLettre.TryGetValue(c, out int score))
             {
-                this.score += (int)Math.Round(score * coeff);
+                total += (int)Math.Round(score * coeff);
             }
         }
-    }
+
+        this.score = (int)Math.Round(total * coeff);
+}
 
     /// On calcule et on retourne le nombre de points que rapporte un mot grâce à un dictionnaire Dictionary<char, int> associant chaque char à un nombre de points
     /// C'est casiment la même fonction que UpdateScore sauf qu'on retourne un int
