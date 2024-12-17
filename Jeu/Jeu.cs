@@ -164,6 +164,7 @@ namespace Jeu
             }
 
             Console.WriteLine();
+            Console.WriteLine();
 
 
             /// Sélection du nombre de tour
@@ -193,21 +194,21 @@ namespace Jeu
                 string input = Console.ReadLine();
                 Console.Clear();
 
-                if (!int.TryParse(input, out tempsLimite) || tempsLimite < 1)
+                if (!int.TryParse(input, out tempsLimite) || tempsLimite < 5)
                 {
-                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 1.");
+                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 10.");
                 }
-                if (!int.TryParse(input, out tempsLimite) || tempsLimite > 1)
+                if (!int.TryParse(input, out tempsLimite) || tempsLimite > 300)
                 {
                     Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier inférieur ou égal à 300.");
                 }
 
-            } while (tempsLimite < 1 || tempsLimite > 301);
+            } while (tempsLimite < 10 || tempsLimite > 301);
 
             Console.Clear();
 
 
-
+            ///regler chrono si on depasse temps, le mot pas valide
 
             /// Création du chrono
             Stopwatch stopwatch = new Stopwatch();
@@ -245,9 +246,23 @@ namespace Jeu
                             mot = monIA.MotIA();
                             Console.Clear();
                             Console.WriteLine(mot + " a été choisi par l'IA.");
-                            Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}"); /// On le remet ici car il ne sera pas visible plus tard à cause de la vitesse de l'IA
-                            Thread.Sleep(2000); /// Petite pause pour voir le mot de l'IA avant de Clear() la console
-                            tempsLimite += 2; ///Pour compenser le temps perdu avec Time.Sleep pour plus d'équité
+                            
+                        }
+
+                        if (stopwatch.Elapsed.TotalSeconds > tempsLimite)
+                        {
+                            Console.WriteLine("Temps dépassé le mot ne sera pas validé");
+                            break;
+                        }
+
+                        else
+                        {
+                            if (joueur.Pseudo == "IA")
+                            {
+                                Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}"); /// On le remet ici car il ne sera pas visible plus tard à cause de la vitesse de l'IA
+                                Thread.Sleep(2000); /// Petite pause pour voir le mot de l'IA avant de Clear() la console
+                                tempsLimite += 2; ///Pour compenser le temps perdu avec Time.Sleep pour plus d'équité
+                            }
                         }
 
 

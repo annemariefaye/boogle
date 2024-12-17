@@ -151,6 +151,7 @@ public class Plateau
         if (!trouveDansGrille)
         {
             Console.WriteLine($"{mot} n'est pas dans la grille");
+            Console.WriteLine();
         }
 
         /// On checke si le mot est dans le dico
@@ -159,6 +160,7 @@ public class Plateau
         if (!dansDico)
         {
             Console.WriteLine($"{mot} n'est pas dans le dictionnaire");
+            Console.WriteLine();
         }
 
         return trouveDansGrille && dansDico;
