@@ -17,27 +17,27 @@
 
 
     /// Ici on utilise simplement la méthode Test_Plateau pour chaque mot du dictionnaire et on retourne le mot rapportant le maximum de points
-    public string MotIA()
+    public List<string> MotsIA()
     {
 
-        int max = 0;
-        string res = "";
+        var motsEtScores = new List<(string Mot, int Score)>();
+        var res = new List<string>();
+
         foreach (var mot in this.dico.Mots)
         {
             if (!this.Mots.Contains(mot)) /// Vérification que le mot n'a pas déjà été entré
-            { 
-                bool inside = plateau.Test_Plateau(mot); /// Appel de la fonction récursive qui cherchera le mot pour chaque case du plateau
-                if (inside)
+            {        
+                if (plateau.Test_Plateau(mot)) /// Appel de la fonction récursive qui cherchera le mot pour chaque case du plateau
                 {
-                    int tempScore = this.GetScore(mot);
-                    if (tempScore > max)
-                    {
-                        max = tempScore;
-                        res = mot;
-                    }
-                } 
+                    /// Calculer le score du mot et l'ajouter à la liste
+                    int score = this.GetScore(mot);
+                    motsEtScores.Add((mot, score));
+                }
             }
         }
+
+        /// On crée une liste qui prend les mots avec les scores les plus élevés d'abord et on enlève le score de la liste on passe de : (mot, score) à mot
+        res = motsEtScores.OrderByDescending(x => x.Score).Select(x => x.Mot).ToList();
 
         return res;
     }

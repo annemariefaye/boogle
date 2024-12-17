@@ -64,8 +64,6 @@ namespace Jeu
 
             Console.Clear();
 
-            Console.WriteLine($"Taille du plateau acceptée : {taillePlateau}");
-
             Plateau plateau = new Plateau(langue, taillePlateau);
 
             int indexCorrection = 0; /// Si on choisi l'IA on en aura besoin pour le choix des pseudos, car l'IA à déjà un nom sélectionné par défaut donc pas besoin de l'entre manuellement
@@ -136,14 +134,18 @@ namespace Jeu
                     Console.WriteLine($"Joueur {i + 1}, entrez votre nom :");
                     nom = Console.ReadLine();
 
-                    if (nomsUtilises.Contains(nom))
+                    if (nomsUtilises.Contains(nom.ToUpper()))
                     {
                         Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
                     }
-                } while (nomsUtilises.Contains(nom));
+                    if(nom.ToUpper() == "IA")
+                    {
+                        Console.WriteLine("Ce nom est interdit. Veuillez en choisir un autre.");
+                    }
+                } while (nomsUtilises.Contains(nom.ToUpper()) || nom == "IA");
 
                 joueurs[i] = new Joueur(nom, langue);
-                nomsUtilises.Add(nom); /// Ajoute le nom à la liste des noms utilisés
+                nomsUtilises.Add(nom.ToUpper()); /// Ajoute le nom à la liste des noms utilisés
             }
 
             Console.Clear();
@@ -230,63 +232,84 @@ namespace Jeu
                    
                     stopwatch.Restart();
 
-
+                    List<string> mots = null;
                     while (stopwatch.Elapsed.TotalSeconds < tempsLimite)
                     {
                         plateau.AfficherPlateau(); ///On réaffiche le tableau car il ne sera plus visible si beaucoup de mots sont entrés
                         string mot;
+                        
                         if (joueur.Pseudo != "IA")
                         {
+                            
+                            Console.WriteLine();
                             Console.WriteLine("Saisissez un nouveau mot");
                             mot = Console.ReadLine().ToUpper();
-                        }
 
-                        else
-                        {
-                            mot = monIA.MotIA();
+                            if (stopwatch.Elapsed.TotalSeconds > tempsLimite)
+                            {
+                                Console.WriteLine($"Temps écoulé {mot} ne sera pas validé.");
+                                Thread.Sleep(3000);
+                                break;
+                            }
+
                             Console.Clear();
-                            Console.WriteLine(mot + " a été choisi par l'IA.");
-                            
-                        }
+                            bool dansPlateau = plateau.Test_Plateau(mot);
+                            bool dejaVu = joueur.Contain(mot);
+                            if (!dejaVu && dansPlateau)
+                            {
+                                joueur.Add_Mot(mot);
+                                Console.Clear();
+                                Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}");
+                                Console.WriteLine();
 
-                        if (stopwatch.Elapsed.TotalSeconds > tempsLimite)
-                        {
-                            Console.WriteLine("Temps dépassé le mot ne sera pas validé");
-                            break;
+                            }
+   
+
+                            if (joueur.Mots.Length > 0)
+                            {
+                                Console.WriteLine("Les mots valides saisis sont :");
+                                foreach (string m in joueur.Mots)
+                                {
+                                    Console.Write(m + " ");
+                                }
+                                Console.WriteLine();
+                                Console.WriteLine();
+
+                            }
                         }
 
                         else
                         {
-                            if (joueur.Pseudo == "IA")
+                            if(mots != null)
                             {
-                                Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}"); /// On le remet ici car il ne sera pas visible plus tard à cause de la vitesse de l'IA
-                                Thread.Sleep(2000); /// Petite pause pour voir le mot de l'IA avant de Clear() la console
-                                tempsLimite += 2; ///Pour compenser le temps perdu avec Time.Sleep pour plus d'équité
+                                foreach (string m in mots)
+                                {
+                                    if (stopwatch.Elapsed.TotalSeconds > tempsLimite)
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("Les mots valides saisis par l'IA sont :");
+                                        foreach (string mt in joueur.Mots)
+                                        {
+                                            Console.Write(mt + " ");
+
+                                        }
+                                        Thread.Sleep(3000);
+                                        break;
+                                    }
+                                    joueur.Add_Mot(m);
+
+                                }
                             }
-                        }
-
-
-                        bool dansPlateau = plateau.Test_Plateau(mot);
-                        bool dejaVu = joueur.Contain(mot);
-                        if (!dejaVu && dansPlateau)
-                        {
-                            joueur.Add_Mot(mot);
-                            joueur.UpdateScore(mot);
-                            Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}");
-                            Console.WriteLine("Les mots valides saisis sont :");
-                            foreach(string m in joueur.Mots)
+                            else
                             {
-                                Console.Write(m);
+                                mots = monIA.MotsIA();
                             }
-                            Console.WriteLine();
-
                         }
 
                     }
 
                     Console.WriteLine();
                     plateau.UpdatePlateau();
-                    Console.WriteLine($"Le score de {joueur.Pseudo} à la fin du tour est : {joueur.Score}");
                     Thread.Sleep(3000); /// Petite pause pour voir le score du joueur avant de Clear() la console
                 }
             }
@@ -320,7 +343,7 @@ namespace Jeu
             if (gagnants.Count >= 2)
             {
                 Console.WriteLine("Le score des vainqueurs est : " + max);
-                Thread.Sleep(5000);
+                Thread.Sleep(2000);
 
                 Console.WriteLine("Les gagnant sont : ");
                 foreach (string n in gagnants)
@@ -336,10 +359,20 @@ namespace Jeu
                 Console.WriteLine("La vainqueur est : " + gagnant);
             }
 
+            Console.WriteLine();
+
+            foreach(var joueur in joueurs)
+            {
+                Console.WriteLine($"{joueur.Pseudo} a marqué {joueur.Score} points durant la partie");
+            }
+
+            Console.WriteLine();
+
             /// Création nuage
             Nuage nuage = new Nuage(joueurs);
             nuage.Creation();
 
+            Console.ReadKey();
 
         }
 

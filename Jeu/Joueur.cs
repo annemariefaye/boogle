@@ -56,7 +56,7 @@
             nouveauxMots[this.mots.Length] = mot; /// Ajouter le nouveau mot
             this.mots = nouveauxMots; /// Mise à jour du tableau
             Console.WriteLine($"Le mot {mot} est valide");
-            this.score++; /// Mise à jour du score
+            this.UpdateScore(mot);
 
         }
         else
@@ -115,7 +115,7 @@
             }
         }
 
-        this.score = (int)Math.Round(total * coeff);
+        this.score += (int)Math.Round(total * coeff);
 }
 
     /// On calcule et on retourne le nombre de points que rapporte un mot grâce à un dictionnaire Dictionary<char, int> associant chaque char à un nombre de points

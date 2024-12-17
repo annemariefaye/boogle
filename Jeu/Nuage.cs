@@ -5,23 +5,18 @@ using KnowledgePicker.WordCloud.Layouts;
 using KnowledgePicker.WordCloud.Primitives;
 using KnowledgePicker.WordCloud.Sizers;
 using SkiaSharp;
-using System.IO;
-using System.Collections.Generic;
 
 class Nuage
 {
     ///Attributs
     Joueur[] joueurs;
-    List<string> mots = new List<string>();
-    List<int> taille = new List<int>();
 
 
 
     ///Constructeur
     public Nuage(Joueur[] joueurs)
     {
-        this.joueurs = joueurs;
-       
+        this.joueurs = joueurs;  
     }
 
     public void Creation()
@@ -42,8 +37,8 @@ class Nuage
         var wc = new WordCloudInput(
             frequences.Select(variable => new WordCloudEntry(variable.Key, variable.Value)))
         {
-            Width = 1024 * facteur,
-            Height = 1024 * facteur,
+            Width = 512 * facteur,
+            Height = 512  * facteur,
             MinFontSize = 8 * facteur,
             MaxFontSize = 32 * facteur
         };
@@ -62,17 +57,18 @@ class Nuage
         image.DrawBitmap(bitmap, 0, 0);
 
         /// Sauvegarder dans le dossier de travail
-        var dossierTravail = Directory.GetParent(AppContext.BaseDirectory)?.Parent?.Parent?.Parent?.FullName;
-        var nom = "Cloud.png";
-        var chemin = Path.Combine(dossierTravail, nom);
+        string repertoireBase = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
+        string fichierImage = "NuageSauvegarde.png";
+        string cheminFinal = Path.Join(repertoireBase, fichierImage);
 
         /// Sauvegarder l'image
-        using var donnees = res.Encode(SKEncodedImageFormat.Png, 100);
-        using var flux = File.OpenWrite(chemin);
-        donnees.SaveTo(flux);
+        var imageCompressee = res.Encode(SKEncodedImageFormat.Png, quality: 100);
+        using (var fichierDestination = new FileStream(cheminFinal, FileMode.Create, FileAccess.Write))
+        {
+            imageCompressee.SaveTo(fichierDestination);
+        }
 
-        
-        Console.WriteLine("Nuage sauvegardé");
+        Console.WriteLine("L'image a été enregistrée avec succès !");
     }
 }
     
