@@ -248,7 +248,7 @@ public class Plateau
         {
             for (int j = 0; j < this.taille; j++)
             {
-                Console.Write(this.des[z].Face);
+                Console.Write(this.des[z].Face + " ");
                 z++;
             }
             Console.WriteLine();
