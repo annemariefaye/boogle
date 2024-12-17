@@ -9,6 +9,7 @@ public class Plateau
     char[,] grille;
     De[] des;
     Dictionary<char, int> lettresDispo;
+    Random rand;
 
 
 
@@ -21,6 +22,7 @@ public class Plateau
         this.des = new De[taille * taille];
         this.lettresDispo = new Dictionary<char, int>();
         this.grille = new char[taille, taille];
+        this.rand = new Random();
 
         /// Generer les des et faire un dico qui compte le nombre de lettre et ban une lettre si on a atteint le cota dans Lettres.txt
         /// On lit le fichier Lettres.txt et on met la lettre et le nombre de lettres disponibles dans un dictionnaire
@@ -203,11 +205,11 @@ public class Plateau
         return false;
     }
 
-    public string toString(De[] des)
+    public string toString()
     {
         string res = "";
 
-        foreach (De de in des)
+        foreach (De de in this.des)
         {
             res += de.toString() + "\n";
         }
@@ -221,7 +223,7 @@ public class Plateau
     {
         foreach (De de in this.des)
         {
-            de.Lance();
+            de.Lance(this.rand);
 
         }
         int index = 0;

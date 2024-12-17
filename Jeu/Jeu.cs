@@ -142,7 +142,7 @@ namespace Jeu
                     }
                 } while (nomsUtilises.Contains(nom));
 
-                joueurs[i] = new Joueur(nom);
+                joueurs[i] = new Joueur(nom, langue);
                 nomsUtilises.Add(nom); /// Ajoute le nom à la liste des noms utilisés
             }
 
@@ -181,8 +181,7 @@ namespace Jeu
 
             } while (nbTours < 1);
 
-            Console.WriteLine($"Nombre de tours accepté : {nbTours}");
-            Console.WriteLine();
+            Console.Clear();
 
 
             /// Sélection du temps par tour 
@@ -205,7 +204,7 @@ namespace Jeu
 
             } while (tempsLimite < 1 || tempsLimite > 301);
 
-            Console.WriteLine($"Temps par tour accepté : {nbTours}s");
+            Console.Clear();
 
 
 
@@ -259,6 +258,12 @@ namespace Jeu
                             joueur.Add_Mot(mot);
                             joueur.UpdateScore(mot);
                             Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}");
+                            Console.WriteLine("Les mots valides saisis sont :");
+                            foreach(string m in joueur.Mots)
+                            {
+                                Console.Write(m);
+                            }
+                            Console.WriteLine();
 
                         }
 

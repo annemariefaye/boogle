@@ -3,13 +3,15 @@
     ///1)Attributs
     string pseudo;
     int score;
+    string langue;
     string[] mots;
 
 
     ///2)Constructeur
-    public Joueur(string pseudo)
+    public Joueur(string pseudo, string langue)
     {
         this.pseudo = pseudo;
+        this.langue = langue;
         while (this.pseudo.Length >= 20)
         {
             Console.WriteLine("pseudo trop grand, veuillez réentrer le pseudo");
@@ -17,6 +19,7 @@
         }
         this.score = 0;
         this.mots = new string[0];
+        this.langue = langue;
     }
 
     ///3)proprietes de lecture
@@ -80,8 +83,17 @@
     public void UpdateScore(string mot)
     {
         mot = mot.ToUpper();
+        float coeff = 1 + (mot.Length / 10.0f) - 0.2f;
         Dictionary<char, int> pointLettre = new Dictionary<char, int>();
-        string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
+        string chemin;
+        if (this.langue == "fr")
+        {
+            chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
+        }
+        else
+        {
+            chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Letters.txt");
+        }
         chemin = Path.GetFullPath(chemin);
         var lignes = File.ReadAllLines(chemin);
         foreach (var ligne in lignes)
@@ -98,7 +110,7 @@
         {
             if (pointLettre.TryGetValue(c, out int score))
             {
-                this.score += score;
+                this.score += (int)Math.Round(score * coeff);
             }
         }
     }
@@ -108,9 +120,18 @@
     public int GetScore(string mot)
     {
         mot = mot.ToUpper();
+        float coeff = 1 + (mot.Length / 10.0f) - 0.2f; /// On ajoute un bonus en fonction de la longueur du mot que s'il fait plus de 2 lettres
         int total = 0;
         Dictionary<char, int> pointLettre = new Dictionary<char, int>();
-        string chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
+        string chemin;
+        if (this.langue == "fr")
+        {
+            chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Lettres.txt");
+        }
+        else
+        {
+            chemin = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Letters.txt");
+        }
         chemin = Path.GetFullPath(chemin);
         var lignes = File.ReadAllLines(chemin);
         foreach (var ligne in lignes)
@@ -131,7 +152,7 @@
             }
         }
 
-        return total;
+        return (int)Math.Round(total * coeff);
     }
 
 }

@@ -11,9 +11,10 @@ namespace JeuTest
         [TestMethod]
         public void TestGetScore()
         {
-            Joueur joueur = new Joueur("j1");
+            Joueur joueur = new Joueur("j1", "fr");
             string motTest = "bonjour";
-            int attendu = 16;
+            float coeff = 1 + (motTest.Length / 10.0f) - 0.2f;
+            int attendu = (int)Math.Round(16 * coeff);
 
             int obtenu = joueur.GetScore(motTest);
 
@@ -24,7 +25,7 @@ namespace JeuTest
         [TestMethod]
         public void TestContain()
         {
-            Joueur joueur = new Joueur("j1");
+            Joueur joueur = new Joueur("j1", "fr");
             string motTest = "bonjour";
             bool attendu = true;
             

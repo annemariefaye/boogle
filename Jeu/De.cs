@@ -3,13 +3,12 @@
     ///Attributs
     char[] lettres;
     char face;
-    Random random;
+    Random random = new Random();
 
     ///Constructeur
     public De(char[] lettres)
     {
         this.lettres = lettres;
-        this.random = new Random();
         int randomIndex = random.Next(this.lettres.Length);
         this.face = this.lettres[randomIndex];
 
@@ -20,12 +19,10 @@
 
     ///Méthodes obligatoires
 
-    public void Lance()
+    public void Lance(Random r)
     {
-        int randomIndex = this.random.Next() % 6; ///Calcul manuel d'un index aléatoire
+        int randomIndex = r.Next() % 6; ///Calcul manuel d'un index aléatoire
         this.face = this.lettres[randomIndex];
-
-
     }
 
     /// On retourne les 6 lettres du dé ainsi qude sa face visible

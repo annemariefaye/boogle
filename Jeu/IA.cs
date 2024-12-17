@@ -7,7 +7,7 @@
 
 
     /// Le constructeur hérite de la classe Joueur mais on ajoute le plateau et la langue en supplément.
-    public IA(Plateau plateau, string langue, string pseudo = "IA") : base(pseudo)
+    public IA(Plateau plateau, string langue, string pseudo = "IA") : base(pseudo, langue)
     {
         this.langue = langue;
         this.dico = new TriDico(this.langue);
