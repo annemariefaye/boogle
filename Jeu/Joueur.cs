@@ -84,7 +84,7 @@
     {
         mot = mot.ToUpper();
         float coeff = 1 + (mot.Length / 10.0f) - 0.2f;
-        int total;
+        int total = 0;
         Dictionary<char, int> pointLettre = new Dictionary<char, int>();
         string chemin;
         if (this.langue == "fr")
