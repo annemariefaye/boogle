@@ -51,15 +51,15 @@ namespace Jeu
 
             do
             {
-                Console.WriteLine("Veuillez entrer la taille du plateau (min 4) : ");
+                Console.WriteLine("Veuillez entrer la taille du plateau (entre 4 et 15) : ");
                 string input = Console.ReadLine();
 
-                if (!int.TryParse(input, out taillePlateau) || taillePlateau < 4)
+                if (!int.TryParse(input, out taillePlateau))
                 {
-                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 4.");
+                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier compris entre 4 et 15.");
                 }
 
-            } while (taillePlateau < 4);
+            } while (taillePlateau < 4 || taillePlateau>15);
 
 
             Console.Clear();
@@ -71,16 +71,21 @@ namespace Jeu
             /// Création des joueurs en fonction de si on choisi de jouer avec l'IA ou non
             if (YN == "Y")
             {
-                while (nbJoueurs - 1 < 1)
+                while (nbJoueurs - 1 < 1 || nbJoueurs>9)
                 {
-                    Console.WriteLine("Veuillez entrer le nombre de joueurs : ");
+                    Console.WriteLine("Veuillez entrer le nombre de joueurs (entre 1 et 8) : ");
                     string input = Console.ReadLine();
 
                     if (int.TryParse(input, out int joueursSup))
                     {
-                        if (joueursSup > 0)
+                        if (joueursSup > 0 && joueursSup < 9)
                         {
                             nbJoueurs += joueursSup; /// Ajoute les joueurs supplémentaires
+                        }
+                        else if (joueursSup > 8)
+                        {
+                            Console.WriteLine("Veuillez entrer un nombre de joueurs inférieur à 8.");
+
                         }
                         else
                         {
@@ -100,14 +105,19 @@ namespace Jeu
 
             else
             {
-                while (nbJoueurs < 2)
+                while (nbJoueurs < 2 || nbJoueurs>8)
                 {
-                    Console.WriteLine("Veuillez entrer le nombre de joueurs (2 minimum) : ");
+                    Console.WriteLine("Veuillez entrer le nombre de joueurs (entre 2 et 8) : ");
                     string input = Console.ReadLine();
 
                     if (int.TryParse(input, out nbJoueurs))
                     {
                         Console.WriteLine("Le nombre de joueurs doit être au moins 2.");
+                    }
+                    else if (nbJoueurs > 8)
+                    {
+                        Console.WriteLine("Veuillez entrer un nombre de joueurs inférieur à 8.");
+
                     }
                     else
                     {
