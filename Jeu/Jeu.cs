@@ -9,15 +9,20 @@ namespace Jeu
     public class Jeu
 
     {
-        private static WaveOutEvent dispositifSortie; /// Déclarer le dispositif de sortie en tant que variable statique
-        private static bool loop = true; /// Indicateur pour contrôler la boucle
+        private static WaveOutEvent _dispositifSortie;
+        private static AudioFileReader _fichierAudio;
+        private static bool _isPlaying;
 
-        static async void Main(string[] args)
+        static async Task Main(string[] args)
         {
+           
+            
+            
             /// Chemins des différentes musiques ou effets sonores du jeu
             string goofyMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "goofy.mp3"));
             string cancanMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "cancan.mp3"));
             string marioMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "mario.mp3"));
+            string candyMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "candy.mp3"));
 
             /// Chemins des différents effets sonores du jeu
             string correctSFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "correct.mp3"));
@@ -35,6 +40,8 @@ namespace Jeu
                 Console.WriteLine("1 - Horrible mais drôle.");
                 Console.WriteLine("2 - Entraînant, c'est un classique de la musique française.");
                 Console.WriteLine("3 - Choisis ça, wallah c'est trop bien !!!");
+                Console.WriteLine("4 - Un classique du jeu vidéo mobile");
+                Console.WriteLine();
 
                 /// Lire l'entrée utilisateur
                 string choixMusique = Console.ReadLine();
@@ -51,8 +58,11 @@ namespace Jeu
                     case "3":
                         backgroundMusic = marioMusic;
                         break;
+                    case "4":
+                        backgroundMusic = candyMusic;
+                        break;
                     default:
-                        Console.WriteLine("Choix non reconnu. Veuillez choisir 1, 2 ou 3.");
+                        Console.WriteLine("Choix non reconnu. Veuillez choisir 1, 2, 3 ou 4.");
                         continue; /// Recommencer la boucle
                 }
 
@@ -62,11 +72,11 @@ namespace Jeu
 
 
             Console.Clear();
-            Console.Write("c la d");
 
 
-            /// Démarrer la lecture en boucle
-            var lectureTask = PlayAudioLoopAsync(backgroundMusic);
+            /// Lancer la lecture audio dans un tâche séparée
+            Task.Run(() => PlayAudioLoop(backgroundMusic));
+
 
 
             ///Sélection de la langue
@@ -415,18 +425,14 @@ namespace Jeu
                 }
             }
 
-            StopAudioLoop(); /// Appeler la méthode pour arrêter la musique
+            StopAudio();
 
-            /// Attendre que la tâche de lecture audio se termine
-            lectureTask.Wait();
 
-            /// Attendre la tâche de lecture audio pour se terminer
-            await lectureTask;
             /// Gestion de plusieurs gagnants ou pas
             if (gagnants.Count >= 2)
             {
                 Console.WriteLine("Le score des vainqueurs est : " + max);
-                PlayAudioAsync(victorySFX);
+                PlayAudioAsync(tambourSFX);
                 Thread.Sleep(5000);
 
                 Console.WriteLine("Les gagnant sont : ");
@@ -441,7 +447,7 @@ namespace Jeu
             else
             {
                 Console.WriteLine("Le score du vainqueur est : " + max);
-                PlayAudioAsync(victorySFX);
+                PlayAudioAsync(tambourSFX);
                 Thread.Sleep(5000);
 
                 Console.WriteLine("La vainqueur est : " + gagnant);
@@ -488,36 +494,51 @@ namespace Jeu
         }
 
         /// Fonction asynchrone pour jouer de la musique en boucle en même temps que de jouer au jeu
-        static async Task PlayAudioLoopAsync(string chemin)
-        {
-            await Task.Run(() =>
-            {
-                using (var fichierAudio = new AudioFileReader(chemin))
-                {
-                    dispositifSortie = new WaveOutEvent(); // Initialiser le dispositif de sortie
-                    dispositifSortie.Init(fichierAudio);
-                    while (true) // Boucle infinie pour jouer la musique
-                    {
-                        dispositifSortie.Play();
-                        while (dispositifSortie.PlaybackState == PlaybackState.Playing)
-                        {
-                            Thread.Sleep(100); // Attendre que la musique joue
-                        }
-                        fichierAudio.Position = 0; // Réinitialiser la position à 0
-                    }
-                }
-            });
-        }
 
-        static void StopAudioLoop()
+        static void PlayAudioLoop(string chemin)
         {
-            if (dispositifSortie != null && dispositifSortie.PlaybackState == PlaybackState.Playing)
+            _fichierAudio = new AudioFileReader(chemin);
+            _dispositifSortie = new WaveOutEvent();
+            _dispositifSortie.Init(_fichierAudio);
+            _dispositifSortie.Play();
+            _isPlaying = true; // Indique que la musique est en lecture
+
+            // Événement pour jouer la musique en boucle
+            _dispositifSortie.PlaybackStopped += (sender, args) =>
             {
-                dispositifSortie.Stop(); // Arrêter immédiatement la musique
-                dispositifSortie.Dispose(); // Libérer les ressources
-                dispositifSortie = null; // Réinitialiser le dispositif de sortie
+                if (_isPlaying)
+                {
+                    _fichierAudio.Position = 0; // Remet le fichier audio au début
+                    _dispositifSortie.Play(); // Rejoue la musique
+                }
+            };
+
+            // Attendre que la musique finisse ou qu'elle soit arrêtée
+            while (_isPlaying)
+            {
+                // Vérifie si la musique est toujours en lecture
+                if (_dispositifSortie.PlaybackState != PlaybackState.Playing)
+                {
+                    break; // Sort de la boucle si la musique s'arrête
+                }
+                Task.Delay(100).Wait(); // Petite pause pour éviter de bloquer le thread principal
             }
         }
+
+        static void StopAudio()
+        {
+            // Vérifie si le dispositif de sortie est initialisé avant d'arrêter
+            if (_dispositifSortie != null)
+            {
+                _isPlaying = false; // Indique que la musique ne doit plus jouer
+                _dispositifSortie.Stop();
+                _dispositifSortie.Dispose(); // Libère les ressources
+                _fichierAudio.Dispose(); // Libère les ressources
+                _dispositifSortie = null; // Réinitialise la référence
+                _fichierAudio = null; // Réinitialise la référence
+            }
+        }
+
 
         /// Test des 3 méthodes de recherche dans le dictionnaire avec un chronomètre pour regarder la méthode la plus efficace.
         static void TestDico()

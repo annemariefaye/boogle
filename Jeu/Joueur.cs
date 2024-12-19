@@ -14,7 +14,7 @@
         this.langue = langue;
         while (this.pseudo.Length >= 20)
         {
-            Console.WriteLine("pseudo trop grand, veuillez réentrer le pseudo");
+            Console.WriteLine("Pseudo trop grand, veuillez réentrer le pseudo");
             this.pseudo = Console.ReadLine();
         }
         this.score = 0;
