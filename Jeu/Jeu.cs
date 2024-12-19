@@ -1,12 +1,73 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
+using NAudio.Wave;
+
 
 namespace Jeu 
 {
     public class Jeu
+
     {
-        static void Main(string[] args)
+        private static WaveOutEvent dispositifSortie; /// Déclarer le dispositif de sortie en tant que variable statique
+        private static bool loop = true; /// Indicateur pour contrôler la boucle
+
+        static async void Main(string[] args)
         {
+            /// Chemins des différentes musiques ou effets sonores du jeu
+            string goofyMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "goofy.mp3"));
+            string cancanMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "cancan.mp3"));
+            string marioMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "mario.mp3"));
+
+            /// Chemins des différents effets sonores du jeu
+            string correctSFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "correct.mp3"));
+            string wrongSFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "wrong.mp3"));
+            string tambourSFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "tambour.mp3"));
+            string victorySFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "victory.mp3"));
+
+
+            string backgroundMusic = "";
+
+            while (true) /// Boucle infinie jusqu'à ce qu'un choix valide soit fait
+            {
+                /// Demander à l'utilisateur de choisir une musique
+                Console.WriteLine("Veuillez choisir une musique à jouer :");
+                Console.WriteLine("1 - Horrible mais drôle.");
+                Console.WriteLine("2 - Entraînant, c'est un classique de la musique française.");
+                Console.WriteLine("3 - Choisis ça, wallah c'est trop bien !!!");
+
+                /// Lire l'entrée utilisateur
+                string choixMusique = Console.ReadLine();
+
+                /// Switch pour sélectionner la musique à jouer
+                switch (choixMusique)
+                {
+                    case "1":
+                        backgroundMusic = goofyMusic;
+                        break;
+                    case "2":
+                        backgroundMusic = cancanMusic;
+                        break;
+                    case "3":
+                        backgroundMusic = marioMusic;
+                        break;
+                    default:
+                        Console.WriteLine("Choix non reconnu. Veuillez choisir 1, 2 ou 3.");
+                        continue; /// Recommencer la boucle
+                }
+
+                /// Si un choix valide a été fait, sortir de la boucle
+                break;
+            }
+
+
+            Console.Clear();
+            Console.Write("c la d");
+
+
+            /// Démarrer la lecture en boucle
+            var lectureTask = PlayAudioLoopAsync(backgroundMusic);
+
 
             ///Sélection de la langue
             Console.WriteLine("Langue (fr)/Language (en): ");
@@ -59,7 +120,7 @@ namespace Jeu
                     Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier compris entre 4 et 15.");
                 }
 
-            } while (taillePlateau < 4 || taillePlateau>15);
+            } while (taillePlateau < 4 || taillePlateau > 15);
 
 
             Console.Clear();
@@ -71,7 +132,7 @@ namespace Jeu
             /// Création des joueurs en fonction de si on choisi de jouer avec l'IA ou non
             if (YN == "Y")
             {
-                while (nbJoueurs - 1 < 1 || nbJoueurs>9)
+                while (nbJoueurs - 1 < 1 || nbJoueurs > 9)
                 {
                     Console.WriteLine("Veuillez entrer le nombre de joueurs (entre 1 et 8) : ");
                     string input = Console.ReadLine();
@@ -105,7 +166,7 @@ namespace Jeu
 
             else
             {
-                while (nbJoueurs < 2 || nbJoueurs>8)
+                while (nbJoueurs < 2 || nbJoueurs > 8)
                 {
                     Console.WriteLine("Veuillez entrer le nombre de joueurs (entre 2 et 8) : ");
                     string input = Console.ReadLine();
@@ -148,7 +209,7 @@ namespace Jeu
                     {
                         Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
                     }
-                    if(nom.ToUpper() == "IA")
+                    if (nom.ToUpper() == "IA")
                     {
                         Console.WriteLine("Ce nom est interdit. Veuillez en choisir un autre.");
                     }
@@ -235,11 +296,11 @@ namespace Jeu
                 foreach (Joueur joueur in joueurs)
                 {
                     Console.Clear();
-                    Console.WriteLine("Tour " + (j + 1) );
+                    Console.WriteLine("Tour " + (j + 1));
 
                     Console.WriteLine($"C'est au tour de {joueur.Pseudo}");
 
-                   
+
                     stopwatch.Restart();
 
                     List<string> mots = null;
@@ -247,10 +308,10 @@ namespace Jeu
                     {
                         plateau.AfficherPlateau(); ///On réaffiche le tableau car il ne sera plus visible si beaucoup de mots sont entrés
                         string mot;
-                        
+
                         if (joueur.Pseudo != "IA")
                         {
-                            
+
                             Console.WriteLine();
                             Console.WriteLine("Saisissez un nouveau mot");
                             mot = Console.ReadLine().ToUpper();
@@ -267,13 +328,18 @@ namespace Jeu
                             bool dejaVu = joueur.Contain(mot);
                             if (!dejaVu && dansPlateau)
                             {
+                                PlayAudioAsync(correctSFX);
                                 joueur.Add_Mot(mot);
                                 Console.Clear();
                                 Console.WriteLine($"Le mot {mot} a rapporté : {joueur.GetScore(mot)}");
                                 Console.WriteLine();
 
                             }
-   
+                            else
+                            {
+                                PlayAudioAsync(wrongSFX);
+                            }
+
 
                             if (joueur.Mots.Length > 0)
                             {
@@ -290,7 +356,7 @@ namespace Jeu
 
                         else
                         {
-                            if(mots != null)
+                            if (mots != null)
                             {
                                 foreach (string m in mots)
                                 {
@@ -349,29 +415,45 @@ namespace Jeu
                 }
             }
 
+            StopAudioLoop(); /// Appeler la méthode pour arrêter la musique
+
+            /// Attendre que la tâche de lecture audio se termine
+            lectureTask.Wait();
+
+            /// Attendre la tâche de lecture audio pour se terminer
+            await lectureTask;
             /// Gestion de plusieurs gagnants ou pas
             if (gagnants.Count >= 2)
             {
                 Console.WriteLine("Le score des vainqueurs est : " + max);
-                Thread.Sleep(2000);
+                PlayAudioAsync(victorySFX);
+                Thread.Sleep(5000);
 
                 Console.WriteLine("Les gagnant sont : ");
                 foreach (string n in gagnants)
                 {
                     Console.Write($"{n}, ");
                 }
+                PlayAudioAsync(victorySFX);
+                Thread.Sleep(10000);
+
             }
             else
             {
                 Console.WriteLine("Le score du vainqueur est : " + max);
+                PlayAudioAsync(victorySFX);
                 Thread.Sleep(5000);
 
                 Console.WriteLine("La vainqueur est : " + gagnant);
+                PlayAudioAsync(victorySFX);
+                Thread.Sleep(10000);
+
+
             }
 
             Console.WriteLine();
 
-            foreach(var joueur in joueurs)
+            foreach (var joueur in joueurs)
             {
                 Console.WriteLine($"{joueur.Pseudo} a marqué {joueur.Score} points durant la partie");
             }
@@ -382,10 +464,60 @@ namespace Jeu
             Nuage nuage = new Nuage(joueurs);
             nuage.Creation();
 
-            Console.ReadKey();
-
         }
 
+
+        /// Fonction asynchrone pour jouer de la musique en même temps que de jouer au jeu
+        static async Task PlayAudioAsync(string chemin)
+        {
+            Task.Run(() =>
+            {
+                using (var fichierAudio = new AudioFileReader(chemin))
+                using (var dispositifSortie = new WaveOutEvent())
+                {
+                    dispositifSortie.Init(fichierAudio);
+                    dispositifSortie.Play();
+
+                    /// On attend que la musique finisse
+                    while (dispositifSortie.PlaybackState == PlaybackState.Playing)
+                    {
+                        Task.Delay(100).Wait(); /// On évite de bloquer le thread principal
+                    }
+                }
+            });
+        }
+
+        /// Fonction asynchrone pour jouer de la musique en boucle en même temps que de jouer au jeu
+        static async Task PlayAudioLoopAsync(string chemin)
+        {
+            await Task.Run(() =>
+            {
+                using (var fichierAudio = new AudioFileReader(chemin))
+                {
+                    dispositifSortie = new WaveOutEvent(); // Initialiser le dispositif de sortie
+                    dispositifSortie.Init(fichierAudio);
+                    while (true) // Boucle infinie pour jouer la musique
+                    {
+                        dispositifSortie.Play();
+                        while (dispositifSortie.PlaybackState == PlaybackState.Playing)
+                        {
+                            Thread.Sleep(100); // Attendre que la musique joue
+                        }
+                        fichierAudio.Position = 0; // Réinitialiser la position à 0
+                    }
+                }
+            });
+        }
+
+        static void StopAudioLoop()
+        {
+            if (dispositifSortie != null && dispositifSortie.PlaybackState == PlaybackState.Playing)
+            {
+                dispositifSortie.Stop(); // Arrêter immédiatement la musique
+                dispositifSortie.Dispose(); // Libérer les ressources
+                dispositifSortie = null; // Réinitialiser le dispositif de sortie
+            }
+        }
 
         /// Test des 3 méthodes de recherche dans le dictionnaire avec un chronomètre pour regarder la méthode la plus efficace.
         static void TestDico()

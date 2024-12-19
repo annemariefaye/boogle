@@ -33,7 +33,7 @@ class Nuage
         }
 
         /// Pour cette partie nous avons suivie la documentation de KnowledgePicker.WordCloud
-        const int facteur = 4; 
+        const int facteur = 1; 
         var wc = new WordCloudInput(
             frequences.Select(variable => new WordCloudEntry(variable.Key, variable.Value)))
         {
