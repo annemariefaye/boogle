@@ -425,6 +425,7 @@ namespace Jeu
                 }
             }
 
+            /// On stoppe la musique de fin pour lancer le roulement de tambour
             StopAudio();
 
 
@@ -501,41 +502,41 @@ namespace Jeu
             _dispositifSortie = new WaveOutEvent();
             _dispositifSortie.Init(_fichierAudio);
             _dispositifSortie.Play();
-            _isPlaying = true; // Indique que la musique est en lecture
+            _isPlaying = true; /// Indique que la musique est en lecture
 
-            // Événement pour jouer la musique en boucle
+            /// Événement pour jouer la musique en boucle
             _dispositifSortie.PlaybackStopped += (sender, args) =>
             {
                 if (_isPlaying)
                 {
-                    _fichierAudio.Position = 0; // Remet le fichier audio au début
-                    _dispositifSortie.Play(); // Rejoue la musique
+                    _fichierAudio.Position = 0; /// Remet le fichier audio au début
+                    _dispositifSortie.Play(); /// Rejoue la musique
                 }
             };
 
-            // Attendre que la musique finisse ou qu'elle soit arrêtée
+            /// Attendre que la musique finisse ou qu'elle soit arrêtée
             while (_isPlaying)
             {
-                // Vérifie si la musique est toujours en lecture
+                /// Vérifie si la musique est toujours en lecture
                 if (_dispositifSortie.PlaybackState != PlaybackState.Playing)
                 {
-                    break; // Sort de la boucle si la musique s'arrête
+                    break; /// Sort de la boucle si la musique s'arrête
                 }
-                Task.Delay(100).Wait(); // Petite pause pour éviter de bloquer le thread principal
+                Task.Delay(100).Wait(); /// Petite pause pour éviter de bloquer le thread principal
             }
         }
 
         static void StopAudio()
         {
-            // Vérifie si le dispositif de sortie est initialisé avant d'arrêter
+            /// Vérifie si le dispositif de sortie est initialisé avant d'arrêter
             if (_dispositifSortie != null)
             {
-                _isPlaying = false; // Indique que la musique ne doit plus jouer
+                _isPlaying = false; /// Indique que la musique ne doit plus jouer
                 _dispositifSortie.Stop();
-                _dispositifSortie.Dispose(); // Libère les ressources
-                _fichierAudio.Dispose(); // Libère les ressources
-                _dispositifSortie = null; // Réinitialise la référence
-                _fichierAudio = null; // Réinitialise la référence
+                _dispositifSortie.Dispose(); /// Libère les ressources
+                _fichierAudio.Dispose(); /// Libère les ressources
+                _dispositifSortie = null; /// Réinitialise la référence
+                _fichierAudio = null; /// Réinitialise la référence
             }
         }
 
