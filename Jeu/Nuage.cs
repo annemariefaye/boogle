@@ -12,7 +12,6 @@ class Nuage
     Joueur[] joueurs;
 
 
-
     ///Constructeur
     public Nuage(Joueur[] joueurs)
     {

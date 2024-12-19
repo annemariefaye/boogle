@@ -23,6 +23,7 @@ namespace Jeu
             string cancanMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "cancan.mp3"));
             string marioMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "mario.mp3"));
             string candyMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "candy.mp3"));
+            string megaMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "mega.mp3"));
 
             /// Chemins des différents effets sonores du jeu
             string correctSFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "correct.mp3"));
@@ -41,6 +42,7 @@ namespace Jeu
                 Console.WriteLine("2 - Entraînant, c'est un classique de la musique française.");
                 Console.WriteLine("3 - Choisis ça, wallah c'est trop bien !!!");
                 Console.WriteLine("4 - Un classique du jeu vidéo mobile");
+                Console.WriteLine("5 - SAAAAAANS");
                 Console.WriteLine();
 
                 /// Lire l'entrée utilisateur
@@ -61,8 +63,11 @@ namespace Jeu
                     case "4":
                         backgroundMusic = candyMusic;
                         break;
+                    case "5":
+                        backgroundMusic = megaMusic;
+                        break;
                     default:
-                        Console.WriteLine("Choix non reconnu. Veuillez choisir 1, 2, 3 ou 4.");
+                        Console.WriteLine("Choix non reconnu. Veuillez choisir 1, 2, 3, 4 ou 5.");
                         continue; /// Recommencer la boucle
                 }
 
