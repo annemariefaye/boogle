@@ -2,7 +2,11 @@
 using System.Diagnostics;
 using System.Threading;
 using NAudio.Wave;
-
+using ConsoleAppVisuals;
+using ConsoleAppVisuals.PassiveElements;
+using ConsoleAppVisuals.InteractiveElements;
+using ConsoleAppVisuals.AnimatedElements;
+using ConsoleAppVisuals.Enums;
 
 namespace Jeu 
 {
@@ -15,9 +19,19 @@ namespace Jeu
 
         static async Task Main(string[] args)
         {
-           
-            
-            
+
+            Window.Open();
+            Title titre = new Title("BOOGLE");
+            Window.AddElement(titre);
+            Window.Render(titre);
+
+            Text  texteSuivant = new Text(new List<string> { "Appuyez sur 'ENTRER' pour continuer..." }, TextAlignment.Left, Placement.BottomCenterFullWidth);
+            Window.AddElement(texteSuivant);
+            Window.ActivateElement(texteSuivant);
+            Window.Freeze();
+            Window.DeactivateElement(texteSuivant, true);
+
+
             /// Chemins des différentes musiques ou effets sonores du jeu
             string goofyMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "goofy.mp3"));
             string cancanMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "cancan.mp3"));
@@ -37,57 +51,65 @@ namespace Jeu
 
             string backgroundMusic = "";
 
-            while (true) /// Boucle infinie jusqu'à ce qu'un choix valide soit fait
-            {
-                /// Demander à l'utilisateur de choisir une musique
-                Console.WriteLine("Veuillez choisir une musique à jouer :");
-                Console.WriteLine("1 - Goofy");
-                Console.WriteLine("2 - Cancan");
-                Console.WriteLine("3 - Mario Kart");
-                Console.WriteLine("4 - Candy Crush");
-                Console.WriteLine("5 - Megalovania");
-                Console.WriteLine("6 - STAR ! ");
-                Console.WriteLine("7 - Zelda");
-                Console.WriteLine();
 
-                /// Lire l'entrée utilisateur
-                string choixMusique = Console.ReadLine();
+            string[] options = new string[] { "Goofy", "Cancan", "Mario Kart", "Candy Crush", "Megalovania", "STAR !", "Zelda" };
+            ScrollingMenu menu = new ScrollingMenu(
+                "Veuillez sélectionner votre musique",
+                0,
+                Placement.TopCenter,
+                options
+            );
 
-                /// Switch pour sélectionner la musique à jouer
-                switch (choixMusique)
+            Window.AddElement(menu);
+            Window.ActivateElement(menu);
+
+            var responseMenu = menu.GetResponse();
+
+            Dialog embedResponse = new Dialog(
+                new List<string>()
                 {
-                    case "1":
-                        backgroundMusic = goofyMusic;
-                        break;
-                    case "2":
-                        backgroundMusic = cancanMusic;
-                        break;
-                    case "3":
-                        backgroundMusic = marioMusic;
-                        break;
-                    case "4":
-                        backgroundMusic = candyMusic;
-                        break;
-                    case "5":
-                        backgroundMusic = megaMusic;
-                        break;
-                    case "6":
-                        backgroundMusic = starMusic;
-                        break;
-                    case "7":
-                        backgroundMusic = zeldaMusic;
-                        break;
-                    default:
-                        Console.WriteLine("Choix non reconnu. Veuillez choisir un nombre entre 1 et 7.");
-                        continue; /// Recommencer la boucle
+                    $"Vous avez sélectionné: {options[responseMenu!.Value]}",
+                       
                 }
+            );
 
-                /// Si un choix valide a été fait, sortir de la boucle
-                break;
+            Window.ActivateElement(texteSuivant);
+
+
+            Window.AddElement(embedResponse);
+            Window.ActivateElement(embedResponse);
+
+            /// On récupère le choix de l'utilisateur
+            string choixMusique = (responseMenu!.Value + 1).ToString();
+
+            /// Switch pour sélectionner la musique à jouer
+            switch (choixMusique)
+            {
+                case "1":
+                    backgroundMusic = goofyMusic;
+                    break;
+                case "2":
+                    backgroundMusic = cancanMusic;
+                    break;
+                case "3":
+                    backgroundMusic = marioMusic;
+                    break;
+                case "4":
+                    backgroundMusic = candyMusic;
+                    break;
+                case "5":
+                    backgroundMusic = megaMusic;
+                    break;
+                case "6":
+                    backgroundMusic = starMusic;
+                    break;
+                case "7":
+                    backgroundMusic = zeldaMusic;
+                    break;
             }
 
 
-            Console.Clear();
+            Window.DeactivateAllElements();
 
 
             /// Lancer la lecture audio dans un tâche séparée
@@ -96,125 +118,179 @@ namespace Jeu
 
 
             ///Sélection de la langue
-            Console.WriteLine("Langue (fr)/Language (en): ");
+            options = new string[] { "Français", "Anglais"};
+            menu = new ScrollingMenu(
+                "Veuillez choisir la langue du jeu : ",
+                0,
+                Placement.TopCenter,
+                options
+            );
+
+            Window.AddElement(menu);
+            Window.ActivateElement(menu);
+
+            responseMenu = menu.GetResponse();
+
+            embedResponse = new Dialog(
+                new List<string>()
+                {
+                    $"Vous avez sélectionné: {options[responseMenu!.Value]}",
+
+                }
+            );
+
+            Window.ActivateElement(texteSuivant);
+
+
+            Window.AddElement(embedResponse);
+            Window.ActivateElement(embedResponse);
+
             string langue = null;
 
-            while (langue != "fr" && langue != "en")
+            if (responseMenu!.Value == 0)
             {
-                langue = Console.ReadLine().ToLower();
-                if (langue != "fr" && langue != "en")
-                {
-                    Console.WriteLine("Saissisez une langue valide");
-                }
-
+                langue = "fr";
             }
-            Console.Clear();
+            else
+            {
+                langue = "en";
+            }
 
+            Window.DeactivateAllElements();
 
             int nbJoueurs = 0; ///On initialise à 0 ici car on en a besoin si les utilisateurs sélectionnent l'IA car elle comptera comme joueur.
 
             /// On choisi si on joue avec une IA ou non
-            Console.WriteLine("Voulez-vous jouer avec une IA ? : (Y/N)");
+            options = new string[] { "OUI", "NON"};
+            menu = new ScrollingMenu(
+                "Voulez-vous jouer avec une IA : ",
+                0,
+                Placement.TopCenter,
+                options
+            );
+
+            Window.AddElement(menu);
+            Window.ActivateElement(menu);
+
+            responseMenu = menu.GetResponse();
+
+
+            Window.DeactivateAllElements();
+
             string YN = null;
+            int indexCorrection = 0; /// Si on choisi l'IA on en aura besoin pour le choix des pseudos, car l'IA à déjà un nom sélectionné par défaut donc pas besoin de l'entre manuellement
 
-            while (YN != "Y" && YN != "N")
-            {
-                YN = Console.ReadLine().ToUpper();
-                if (YN != "Y" && YN != "N")
-                {
-                    Console.WriteLine("Saissisez 'Y' ou 'N'");
-                }
-            }
 
-            if (YN == "Y")
+            if (responseMenu!.Value == 0)
             {
+                YN = "Y";
                 nbJoueurs++; ///L'IA compte comme joueur
+                indexCorrection = -1;
             }
-            Console.Clear();
+            else
+            {
+                YN = "N";
+            }
+            
 
             /// Creation du plateau
 
             int taillePlateau = 0;
 
-            do
+            options = new string[]
             {
-                Console.WriteLine("Veuillez entrer la taille du plateau (entre 4 et 15) : ");
-                string input = Console.ReadLine();
+                "4x4", "5x5",
+                "6x6", "7x7", "8x8", "9x9", "10x10"
+            };
+            menu = new ScrollingMenu(
+                "Veuillez choisir la taille du plateau : ",
+                0,
+                Placement.TopCenter,
+                options
+            );
 
-                if (!int.TryParse(input, out taillePlateau))
+            Window.AddElement(menu);
+            Window.ActivateElement(menu);
+
+            responseMenu = menu.GetResponse();
+
+            embedResponse = new Dialog(
+                new List<string>()
                 {
-                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier compris entre 4 et 15.");
+                    $"Vous avez sélectionné un plateau de taille: {options[responseMenu!.Value]}",
+
                 }
+            );
 
-            } while (taillePlateau < 4 || taillePlateau > 15);
+            Window.ActivateElement(texteSuivant);
 
 
-            Console.Clear();
+            Window.AddElement(embedResponse);
+            Window.ActivateElement(embedResponse);
+
+            taillePlateau = responseMenu!.Value + 4;
+
+
+            Window.DeactivateAllElements();
 
             Plateau plateau = new Plateau(langue, taillePlateau);
 
-            int indexCorrection = 0; /// Si on choisi l'IA on en aura besoin pour le choix des pseudos, car l'IA à déjà un nom sélectionné par défaut donc pas besoin de l'entre manuellement
 
             /// Création des joueurs en fonction de si on choisi de jouer avec l'IA ou non
-            if (YN == "Y")
+            
+            if(YN == "Y") 
             {
-                while (nbJoueurs - 1 < 1 || nbJoueurs > 9)
+                options = new string[]
                 {
-                    Console.WriteLine("Veuillez entrer le nombre de joueurs (entre 1 et 8) : ");
-                    string input = Console.ReadLine();
-
-                    if (int.TryParse(input, out int joueursSup))
-                    {
-                        if (joueursSup > 0 && joueursSup < 9)
-                        {
-                            nbJoueurs += joueursSup; /// Ajoute les joueurs supplémentaires
-                        }
-                        else if (joueursSup > 8)
-                        {
-                            Console.WriteLine("Veuillez entrer un nombre de joueurs inférieur à 8.");
-
-                        }
-                        else
-                        {
-                            Console.WriteLine("Veuillez entrer un nombre positif.");
-                        }
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("Veuillez entrer un nombre valide.");
-                    }
-                }
-                Console.Clear();
-                Console.WriteLine($"Nombre de joueurs accepté : {nbJoueurs}");
-                indexCorrection = -1;
+                    "1", "2", "3", "4", "5", "6", "7", "8"
+                };
             }
-
             else
             {
-                while (nbJoueurs < 2 || nbJoueurs > 8)
+                options = new string[]
                 {
-                    Console.WriteLine("Veuillez entrer le nombre de joueurs (entre 2 et 8) : ");
-                    string input = Console.ReadLine();
-
-                    if (int.TryParse(input, out nbJoueurs))
-                    {
-                        Console.WriteLine("Le nombre de joueurs doit être au moins 2.");
-                    }
-                    else if (nbJoueurs > 8)
-                    {
-                        Console.WriteLine("Veuillez entrer un nombre de joueurs inférieur à 8.");
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("Veuillez entrer un nombre valide.");
-                    }
-                }
-                Console.Clear();
-                Console.WriteLine($"Nombre de joueurs accepté : {nbJoueurs}");
-
+                    "2", "3", "4", "5", "6", "7", "8"
+                };
             }
+            
+            menu = new ScrollingMenu(
+                "Veuillez choisir le nombre de joueur : ",
+                0,
+                Placement.TopCenter,
+                options
+            );
+
+            Window.AddElement(menu);
+            Window.ActivateElement(menu);
+
+            responseMenu = menu.GetResponse();
+
+            embedResponse = new Dialog(
+                new List<string>()
+                {
+                        $"Le nombre de joueurs durant la partie est de : {options[responseMenu!.Value]}",
+
+                }
+            );
+
+            Window.ActivateElement(texteSuivant);
+
+
+            Window.AddElement(embedResponse);
+            Window.ActivateElement(embedResponse);
+
+            if(YN == "Y")
+            {
+                nbJoueurs += responseMenu!.Value + 1;
+            }
+            else
+            {
+                nbJoueurs = responseMenu!.Value + 2;
+            }
+            
+
+            Window.DeactivateAllElements();
+            
 
             Joueur[] joueurs = new Joueur[nbJoueurs];
 
@@ -228,16 +304,42 @@ namespace Jeu
                 string nom;
                 do
                 {
-                    Console.WriteLine($"Joueur {i + 1}, entrez votre nom :");
-                    nom = Console.ReadLine();
+
+                    Prompt prompt = new Prompt($"Joueur {i+1} entrez votre pseudo (IA est un pseudo interdit) :");
+                    Window.AddElement(prompt);
+                    Window.ActivateElement(prompt);
+
+                    var response = prompt.GetResponse();
+
+                    nom = response!.Value;
 
                     if (nomsUtilises.Contains(nom.ToUpper()))
                     {
-                        Console.WriteLine("Ce nom est déjà utilisé. Veuillez en choisir un autre.");
+                        Dialog text = new Dialog(
+                        new List<string>()
+                        {
+                            response!.Value + " a déjà été choisi !",
+                            "Veuillez choisir un nouveau pseudo "
+                        },
+                        null,
+                        "OK"
+                        );
+                        Window.AddElement(text);
+                        Window.ActivateElement(text);
                     }
                     if (nom.ToUpper() == "IA")
                     {
-                        Console.WriteLine("Ce nom est interdit. Veuillez en choisir un autre.");
+                        Dialog text = new Dialog(
+                        new List<string>()
+                        {
+                            response!.Value + " est un pseudo interdit !",
+                            "Veuillez choisir un nouveau pseudo "
+                        },
+                        null,
+                        "OK"
+                        );
+                        Window.AddElement(text);
+                        Window.ActivateElement(text);
                     }
                 } while (nomsUtilises.Contains(nom.ToUpper()) || nom == "IA");
 
@@ -254,34 +356,73 @@ namespace Jeu
                 joueurs[joueurs.Length - 1] = monIA;
             }
 
-
             /// On affiche tous les joueurs
-            Console.WriteLine("Liste des joueurs :");
-            foreach (var joueur in joueurs)
+            List<string> titreJoueur = new List<string>() {"Liste des joueurs : "};
+            EmbedText affichage = new EmbedText(titreJoueur, TextAlignment.Left, Placement.TopCenter, BordersType.SingleStraight);
+            
+
+            List<string> jListe = new List<string>();
+
+
+            foreach (Joueur joueur in joueurs)
             {
-                Console.WriteLine(joueur.Pseudo);
+                jListe.Add(joueur.Pseudo);
             }
 
-            Console.WriteLine();
-            Console.WriteLine();
+            Text jAffichage = new Text(jListe, TextAlignment.Left, Placement.TopCenter);
+            
+            Window.ActivateElement(texteSuivant);
+
+            Window.AddElement(affichage);
+            Window.ActivateElement(affichage);
+            Window.AddElement(jAffichage);
+            Window.ActivateElement(jAffichage);
+            
+            Window.Freeze();
+
+            Window.DeactivateAllElements();
+
+
 
 
             /// Sélection du nombre de tour
-            int nbTours;
+            int nbTours = 0;
+            
+            options = new string[]
+              {
+                    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+              };
 
-            do
-            {
-                Console.WriteLine("Veuillez entrer le nombre de tours (min 1) : ");
-                string input = Console.ReadLine();
+            menu = new ScrollingMenu(
+                "Veuillez choisir le nombre de tours : ",
+                0,
+                Placement.TopCenter,
+                options
+            );
 
-                if (!int.TryParse(input, out nbTours) || nbTours < 1)
+            Window.AddElement(menu);
+            Window.ActivateElement(menu);
+
+            responseMenu = menu.GetResponse();
+
+            embedResponse = new Dialog(
+                new List<string>()
                 {
-                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 1.");
+                        $"Le nombre de tours durant la partie est de : {options[responseMenu!.Value]}",
+
                 }
+            );
 
-            } while (nbTours < 1);
+            Window.ActivateElement(texteSuivant);
 
-            Console.Clear();
+
+            Window.AddElement(embedResponse);
+            Window.ActivateElement(embedResponse);
+
+            nbTours += responseMenu!.Value + 1;
+
+            Window.DeactivateAllElements();
+
 
 
             /// Sélection du temps par tour 
@@ -289,20 +430,44 @@ namespace Jeu
 
             do
             {
-                Console.WriteLine("Veuillez entrer le temps par tour (en secondes) : ");
-                string input = Console.ReadLine();
-                Console.Clear();
+                Prompt prompt = new Prompt("Veuillez entrer le temps par tour de 10s à 300s : ");
+                Window.AddElement(prompt);
+                Window.ActivateElement(prompt);
 
-                if (!int.TryParse(input, out tempsLimite) || tempsLimite < 5)
+                var response = prompt.GetResponse();
+
+                string input = response!.Value;
+
+                if (!int.TryParse(input, out tempsLimite) || tempsLimite < 10)
                 {
-                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 10.");
+                    Dialog text = new Dialog(
+                       new List<string>()
+                       {
+                            response!.Value + " est une entrée invalide. Veuillez entrer un nombre entier supérieur ou égal à 10.",
+                       },
+                       null,
+                       "OK"
+                       );
+                    Window.AddElement(text);
+                    Window.ActivateElement(text);
                 }
                 if (!int.TryParse(input, out tempsLimite) || tempsLimite > 300)
                 {
-                    Console.WriteLine("Entrée invalide. Veuillez entrer un nombre entier inférieur ou égal à 300.");
+                    Dialog text = new Dialog(
+                      new List<string>()
+                      {
+                            response!.Value + " est une entrée invalide. Veuillez entrer un nombre entier inféirieur ou égal à 300.",
+                      },
+                      null,
+                      "OK"
+                      );
+                    Window.AddElement(text);
+                    Window.ActivateElement(text);
                 }
 
             } while (tempsLimite < 10 || tempsLimite > 301);
+
+            Window.DeactivateAllElements();
 
             Console.Clear();
 
@@ -443,6 +608,7 @@ namespace Jeu
 
             /// On stoppe la musique de fin pour lancer le roulement de tambour
             StopAudio();
+
 
 
             /// Gestion de plusieurs gagnants ou pas
