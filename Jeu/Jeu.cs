@@ -24,6 +24,9 @@ namespace Jeu
             string marioMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "mario.mp3"));
             string candyMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "candy.mp3"));
             string megaMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "mega.mp3"));
+            string starMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "star.mp3"));
+            string zeldaMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "zelda.mp3"));
+            string dreamMusic = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "dream.mp3"));
 
             /// Chemins des différents effets sonores du jeu
             string correctSFX = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "correct.mp3"));
@@ -38,11 +41,13 @@ namespace Jeu
             {
                 /// Demander à l'utilisateur de choisir une musique
                 Console.WriteLine("Veuillez choisir une musique à jouer :");
-                Console.WriteLine("1 - Horrible mais drôle.");
-                Console.WriteLine("2 - Entraînant, c'est un classique de la musique française.");
-                Console.WriteLine("3 - Choisis ça, wallah c'est trop bien !!!");
-                Console.WriteLine("4 - Un classique du jeu vidéo mobile");
-                Console.WriteLine("5 - SAAAAAANS");
+                Console.WriteLine("1 - Goofy");
+                Console.WriteLine("2 - Cancan");
+                Console.WriteLine("3 - Mario Kart");
+                Console.WriteLine("4 - Candy Crush");
+                Console.WriteLine("5 - Megalovania");
+                Console.WriteLine("6 - STAR ! ");
+                Console.WriteLine("7 - Zelda");
                 Console.WriteLine();
 
                 /// Lire l'entrée utilisateur
@@ -66,8 +71,14 @@ namespace Jeu
                     case "5":
                         backgroundMusic = megaMusic;
                         break;
+                    case "6":
+                        backgroundMusic = starMusic;
+                        break;
+                    case "7":
+                        backgroundMusic = zeldaMusic;
+                        break;
                     default:
-                        Console.WriteLine("Choix non reconnu. Veuillez choisir 1, 2, 3, 4 ou 5.");
+                        Console.WriteLine("Choix non reconnu. Veuillez choisir un nombre entre 1 et 7.");
                         continue; /// Recommencer la boucle
                 }
 
@@ -475,6 +486,28 @@ namespace Jeu
             /// Création nuage
             Nuage nuage = new Nuage(joueurs);
             nuage.Creation();
+
+            Task.Run(() => PlayAudioLoop(dreamMusic));
+
+            Console.WriteLine();
+
+            Console.WriteLine("Appuyez sur 'Q' pour quitter.");
+
+            /// Boucle infinie tant que 'Q' n'est pas pressé
+            while (true)
+            {
+                if (Console.KeyAvailable) /// Vérifie si une touche a été pressée
+                {
+                    var key = Console.ReadKey(intercept: true).Key; // Récupère la touche sans l'afficher
+                    if (key == ConsoleKey.Q) /// Vérifie si c'est 'Q'
+                    {
+                        Console.WriteLine("Vous avez appuyé sur 'Q'. Fin du programme.");
+                        break; /// Sort de la boucle
+                    }
+                }
+            }
+
+
 
         }
 
